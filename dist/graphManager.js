@@ -24,7 +24,6 @@ class GraphManager {
         const projectContent = await fs.readFile(config.get('file'), 'utf8');
         const project = loadProjectFromString(projectContent);
         const graphInput = config.get('graphInput');
-        console.log(messages);
         const options = {
             graph: config.get('graphName'),
             inputs: {

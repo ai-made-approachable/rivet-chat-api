@@ -47,7 +47,6 @@ async *runGraph(messages: Array<{ type: 'user' | 'assistant', message: string }>
     let lastContent = '';
 
     for await (const event of processor.events()) {
-        // ...
   
         if (event.type === 'partialOutput' && event.node.type === config.get('nodeType') && event.node.title === config.get('nodeName')) {
           const content = (event.outputs as any).response.value;
