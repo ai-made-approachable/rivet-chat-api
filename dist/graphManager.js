@@ -1,4 +1,4 @@
-import { startDebuggerServer, loadProjectFromString, createProcessor, } from '@ironclad/rivet-node';
+import { startDebuggerServer, loadProjectFromString, createProcessor } from '@ironclad/rivet-node';
 import config from 'config';
 import fs from 'fs/promises';
 class GraphManager {
@@ -27,10 +27,13 @@ class GraphManager {
         const options = {
             graph: config.get('graphName'),
             inputs: {
-                [graphInput]: JSON.stringify(messages.map((message) => ({
-                    type: message.type,
-                    message: message.message,
-                }))),
+                [graphInput]: {
+                    type: 'chat-message[]',
+                    value: messages.map((message) => ({
+                        type: message.type,
+                        message: message.message,
+                    })),
+                },
             },
             openAiKey: process.env.OPEN_API_KEY,
             remoteDebugger: this.debuggerServer,

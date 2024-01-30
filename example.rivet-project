@@ -18,7 +18,7 @@ data:
               about that!
           outgoingConnections:
             - output->"Prompt" hWLNO4XDZO9XPXIDGVjga/input
-          visualData: 356.84302749983783/62.63680087073433/330/40//
+          visualData: 345.2716928515801/39.49413157421887/330/45//
         '[NOaDQSTgVr8lJoGjPetSo]:graphInput "Graph Input"':
           data:
             dataType: chat-message[]
@@ -26,7 +26,7 @@ data:
             useDefaultValueInput: false
           outgoingConnections:
             - data->"Output (Chat)" t3d6sXbFk0i9EkAgvd37R/prompt
-          visualData: 357.9702322222935/370.28996682538667/330/33/var(--node-color-3)/var(--grey-darkish)
+          visualData: 351.95598246174876/489.9382502904898/330/62/var(--node-color-3)/var(--grey-darkish)
         '[hWLNO4XDZO9XPXIDGVjga]:prompt "Prompt"':
           data:
             enableFunctionCall: false
@@ -35,7 +35,7 @@ data:
             useTypeInput: false
           outgoingConnections:
             - output->"Output (Chat)" t3d6sXbFk0i9EkAgvd37R/systemPrompt
-          visualData: 391.3836324054283/208.59871192339122/280/37//
+          visualData: 389.2797533784723/243.3127158681644/280/43//
         '[t3d6sXbFk0i9EkAgvd37R]:chat "Output (Chat)"':
           data:
             cache: false

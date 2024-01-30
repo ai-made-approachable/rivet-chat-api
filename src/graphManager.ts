@@ -2,8 +2,8 @@ import {
     startDebuggerServer,
     loadProjectFromString,
     createProcessor,
-    RunGraphOptions,
     NodeRunGraphOptions,
+    ChatMessage
 } from '@ironclad/rivet-node';
 import config from 'config';
 import fs from 'fs/promises';
@@ -35,18 +35,22 @@ class GraphManager {
         const graphInput = config.get('graphInput') as string;
 
         const options = {
-            graph: config.get('graphName'),
-            inputs: {
-                [graphInput]: JSON.stringify(
-                    messages.map((message) => ({
-                        type: message.type,
-                        message: message.message,
-                    }))
-                ),
-            },
-            openAiKey: process.env.OPEN_API_KEY,
-            remoteDebugger: this.debuggerServer,
-        } satisfies NodeRunGraphOptions;
+          graph: config.get('graphName'),
+          inputs: {
+              [graphInput]: {
+                  type: 'chat-message[]',
+                  value: messages.map(
+                      (message) =>
+                          ({
+                              type: message.type,
+                              message: message.message,
+                          } as ChatMessage)
+                  ),
+              },
+          },
+          openAiKey: process.env.OPEN_API_KEY,
+          remoteDebugger: this.debuggerServer,
+      } satisfies NodeRunGraphOptions;
 
         console.log('Creating processor');
 
