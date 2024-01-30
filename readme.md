@@ -8,9 +8,9 @@ Features:
 - Streams the output
 - Transforms messages, before sending them to the rivet graph
 
-Currently not supported:
+Currently not supported (maybe added in the future):
 - System prompts and LLM settings (e.g. temperature) set in Chatbot-UI interface are currently not being send to the graph
-- File attachments will not work
+- Advanced features like file attachments or tools will also not work
 
 ![Chat UI for Rivet!](/chat_ui.png "Chat UI for Rivet!")
 
