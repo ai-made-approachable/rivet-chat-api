@@ -1,18 +1,25 @@
 
 With this project you can use "Chatbot-UI" as user interface for your Rivet projects!
+This allows you to create complex LLM based processes (e.g. a teachable assistant) in a visual programming interface and interact with it via a beautiful chat UI. Chatbot-UI also keeps all the conversation history, so we do not need to care about that!
 
+Features:
 - Creates an OpenAI SDK compatible API for any rivet project
 - Captures streaming output from a configured node
 - Streams the output
 - Transforms messages, before sending them to the rivet graph
+
+Currently not supported:
+- System prompts and LLM settings (e.g. temperature) set in Chatbot-UI interface are currently not being send to the graph
+- File attachments will not work
+
+![Chat UI for Rivet!](/chat_ui.png "Chat UI for Rivet!")
 
 # Project setup
 For simplicity all is explained for Visual Studio Code. You can of course run it in other IDEs.
 
 ## Software installation (prerequisites)
 1. Install **Visual Studio Code**: https://code.visualstudio.com/download
-1. Install **node.js + node package manager**: https://nodejs.org/en/download/ 
- (in the install process, make sure you also install npm package manager!)
+1. Install **node.js + node package manager**: https://nodejs.org/en/download/ (in the install process, make sure you also install npm package manager!)
 1. Install **Github**: https://desktop.github.com/
 
 ## Clone the repo
@@ -32,7 +39,7 @@ Just press "Run -> Start Debugging" in Visual Studio Code.
 ## Use your own project files
 - Make sure your project file has an input of type "chat-message" and array checked (Type: chat-message[])
 - Open ```config/default.json```
-- Change the values accordingly to your graph
+- Change the values accordingly to your graph (file, graphName, graphInput ...)
 
 
 ---

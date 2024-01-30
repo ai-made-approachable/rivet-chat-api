@@ -38,7 +38,6 @@ class GraphManager {
         console.log('Starting to process events'); // Debugging line
         let lastContent = '';
         for await (const event of processor.events()) {
-            // ...
             if (event.type === 'partialOutput' && event.node.type === config.get('nodeType') && event.node.title === config.get('nodeName')) {
                 const content = event.outputs.response.value;
                 this.output = content; // Update the output variable with the content
