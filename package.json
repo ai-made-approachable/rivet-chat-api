@@ -1,0 +1,16 @@
+{
+  "name": "rivet-node_example",
+  "version": "1.0.0",
+  "description": "Simple example how to run rivet-node and execute your rivet graphs",
+  "main": "rivet.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ironclad/rivet-node": "^1.14.0",
+    "config": "^3.3.10"
+  }
+}

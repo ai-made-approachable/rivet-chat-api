@@ -1,0 +1,7 @@
+{
+    "file": "./example.rivet-project",
+    "graphName": "chat-history",
+    "nodeType": "chat",
+    "nodeName": "Output (Chat)",
+    "graphInput": "input"
+}
