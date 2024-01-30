@@ -16,10 +16,10 @@ app.post('/chat/completions', async (req, res) => {
 
     // Common data for all chunks
     const commonData = {
-        id: "chatcmpl-mockId12345",
-        object: "chat.completion.chunk",
+        id: 'chatcmpl-mockId12345',
+        object: 'chat.completion.chunk',
         created: Date.now(),
-        model: "rivet",
+        model: 'rivet',
         system_fingerprint: null,
     };
 
@@ -32,9 +32,9 @@ app.post('/chat/completions', async (req, res) => {
                     index: 0,
                     delta: { content: chunk },
                     logprobs: null,
-                    finish_reason: null
-                }
-            ]
+                    finish_reason: null,
+                },
+            ],
         };
         res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
     }

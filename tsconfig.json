@@ -6,6 +6,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": "./*",
+    "skipLibCheck": true,
     "paths": {
       "@server/*": ["./*"],
       "@root/*": ["../src/*"]

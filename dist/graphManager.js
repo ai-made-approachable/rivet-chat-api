@@ -1,4 +1,4 @@
-import { startDebuggerServer, coreCreateProcessor, loadProjectFromString } from '@ironclad/rivet-node';
+import { startDebuggerServer, loadProjectFromString, createProcessor, } from '@ironclad/rivet-node';
 import config from 'config';
 import fs from 'fs/promises';
 class GraphManager {
@@ -8,9 +8,9 @@ class GraphManager {
         this.debuggerServer = null;
     }
     // Make sure we only have one debugger
-    async startDebuggerServerIfNeeded() {
+    startDebuggerServerIfNeeded() {
         if (!this.debuggerServer) {
-            this.debuggerServer = await startDebuggerServer({});
+            this.debuggerServer = startDebuggerServer({});
         }
     }
     async *runGraph(messages) {
@@ -20,25 +20,30 @@ class GraphManager {
             return;
         }
         this.isRunning = true;
-        await this.startDebuggerServerIfNeeded();
+        this.startDebuggerServerIfNeeded();
         const projectContent = await fs.readFile(config.get('file'), 'utf8');
         const project = loadProjectFromString(projectContent);
         const graphInput = config.get('graphInput');
         const options = {
             graph: config.get('graphName'),
             inputs: {
-                [graphInput]: JSON.stringify(messages.map(message => ({ type: message.type, message: message.message })))
+                [graphInput]: JSON.stringify(messages.map((message) => ({
+                    type: message.type,
+                    message: message.message,
+                }))),
             },
             openAiKey: process.env.OPEN_API_KEY,
-            remoteDebugger: this.debuggerServer
+            remoteDebugger: this.debuggerServer,
         };
         console.log('Creating processor');
-        const { processor, run } = coreCreateProcessor(project, options);
+        const { processor, run } = createProcessor(project, options);
         const runPromise = run();
         console.log('Starting to process events'); // Debugging line
         let lastContent = '';
         for await (const event of processor.events()) {
-            if (event.type === 'partialOutput' && event.node.type === config.get('nodeType') && event.node.title === config.get('nodeName')) {
+            if (event.type === 'partialOutput' &&
+                event.node.type === config.get('nodeType') &&
+                event.node.title === config.get('nodeName')) {
                 const content = event.outputs.response.value;
                 this.output = content; // Update the output variable with the content
                 if (content.startsWith(lastContent)) {
