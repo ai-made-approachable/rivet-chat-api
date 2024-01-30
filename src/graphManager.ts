@@ -1,4 +1,10 @@
-import { startDebuggerServer, coreCreateProcessor, loadProjectFromString } from '@ironclad/rivet-node';
+import {
+    startDebuggerServer,
+    loadProjectFromString,
+    createProcessor,
+    RunGraphOptions,
+    NodeRunGraphOptions,
+} from '@ironclad/rivet-node';
 import config from 'config';
 import fs from 'fs/promises';
 
@@ -8,9 +14,9 @@ class GraphManager {
     debuggerServer = null;
 
     // Make sure we only have one debugger
-    async startDebuggerServerIfNeeded() {
+    startDebuggerServerIfNeeded() {
         if (!this.debuggerServer) {
-            this.debuggerServer = await startDebuggerServer({});
+            this.debuggerServer = startDebuggerServer({});
         }
     }
 
@@ -23,10 +29,10 @@ class GraphManager {
         }
 
         this.isRunning = true;
-        await this.startDebuggerServerIfNeeded();
+        this.startDebuggerServerIfNeeded();
         const projectContent = await fs.readFile(config.get('file'), 'utf8');
         const project = loadProjectFromString(projectContent);
-        const graphInput = config.get('graphInput');
+        const graphInput = config.get('graphInput') as string;
 
         const options = {
             graph: config.get('graphName'),
@@ -40,11 +46,11 @@ class GraphManager {
             },
             openAiKey: process.env.OPEN_API_KEY,
             remoteDebugger: this.debuggerServer,
-        };
+        } satisfies NodeRunGraphOptions;
 
         console.log('Creating processor');
 
-        const { processor, run } = coreCreateProcessor(project, options);
+        const { processor, run } = createProcessor(project, options);
         const runPromise = run();
 
         console.log('Starting to process events'); // Debugging line
