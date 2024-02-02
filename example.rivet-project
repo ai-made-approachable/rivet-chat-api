@@ -26,7 +26,7 @@ data:
             useDefaultValueInput: false
           outgoingConnections:
             - data->"Output (Chat)" t3d6sXbFk0i9EkAgvd37R/prompt
-          visualData: 351.95598246174876/489.9382502904898/330/62/var(--node-color-3)/var(--grey-darkish)
+          visualData: 351.95598246174876/489.9382502904898/330/64/var(--node-color-3)/var(--grey-darkish)
         '[hWLNO4XDZO9XPXIDGVjga]:prompt "Prompt"':
           data:
             enableFunctionCall: false
