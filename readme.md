@@ -7,10 +7,12 @@ Features:
 - Captures streaming output from a configured node
 - Streams the output
 - Transforms messages, before sending them to the rivet graph
+- Beautiful Chat-UI (provided by Chatbot-UI)
+- Chatbot-UI features: Multiple chats with conversation history, Integrated RAG etc.
 
 Currently not supported (maybe added in the future):
 - System prompts and LLM settings (e.g. temperature) set in Chatbot-UI interface are currently not being send to the graph
-- Advanced features like file attachments or tools will also not work
+- Tools added in Chatbot-UI will not be passed
 
 ![Chat UI for Rivet!](/chat_ui.png "Chat UI for Rivet!")
 
