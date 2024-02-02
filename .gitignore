@@ -1,3 +1,6 @@
 /.vscode/launch.json
 /node_modules/
 /dist/
+example.rivet-data
+example.rivet-project
+/config/default.json
