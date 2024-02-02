@@ -54,36 +54,42 @@ class GraphManager {
 
         console.log('Creating processor');
 
-        const { processor, run } = createProcessor(project, options);
-        const runPromise = run();
+        // Do not fail application on error
+        try {
+            const { processor, run } = createProcessor(project, options);
+            const runPromise = run();
+            console.log('Starting to process events'); // Debugging line
 
-        console.log('Starting to process events'); // Debugging line
+            let lastContent = '';
 
-        let lastContent = '';
+            for await (const event of processor.events()) {
+                if (
+                    event.type === 'partialOutput' &&
+                    event.node.type === config.get('nodeType') &&
+                    event.node.title === config.get('nodeName')
+                ) {
+                    const content = (event.outputs as any).response.value;
+                    this.output = content; // Update the output variable with the content
 
-        for await (const event of processor.events()) {
-            if (
-                event.type === 'partialOutput' &&
-                event.node.type === config.get('nodeType') &&
-                event.node.title === config.get('nodeName')
-            ) {
-                const content = (event.outputs as any).response.value;
-                this.output = content; // Update the output variable with the content
-
-                if (content.startsWith(lastContent)) {
-                    const delta = content.slice(lastContent.length); // Calculate the new data
-                    yield delta; // Yield the new data
-                    lastContent = content; // Update the last content
+                    if (content.startsWith(lastContent)) {
+                        const delta = content.slice(lastContent.length); // Calculate the new data
+                        yield delta; // Yield the new data
+                        lastContent = content; // Update the last content
+                    }
                 }
             }
+
+            console.log('Finished processing events'); // Debugging line
+
+            await runPromise;
+            this.isRunning = false;
+
+            console.log('runGraph finished'); // Debugging line
+        } catch (error) {
+            console.error(error);
+            // Set isRunning to false to allow the next runGraph call to run
+            this.isRunning = false;
         }
-
-        console.log('Finished processing events'); // Debugging line
-
-        await runPromise;
-        this.isRunning = false;
-
-        console.log('runGraph finished'); // Debugging line
     }
 
     getOutput() {
