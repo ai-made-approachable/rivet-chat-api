@@ -19,6 +19,11 @@ data:
           outgoingConnections:
             - output->"Prompt" hWLNO4XDZO9XPXIDGVjga/input
           visualData: 345.2716928515801/39.49413157421887/330/45//
+        '[HQWPuZKRKWOVypjTgTbGx]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1581.6148151070772/473.5155092238109/330/null//
         '[NOaDQSTgVr8lJoGjPetSo]:graphInput "Graph Input"':
           data:
             dataType: chat-message[]
@@ -62,6 +67,12 @@ data:
             useUseTopPInput: false
             useUserInput: false
           visualData: 835.1097899549993/313.8617381627201/230/32//
+        '[xg4uYODVDjQ1_DJMOfmnI]:text "Text"':
+          data:
+            text: test
+          outgoingConnections:
+            - output->"Graph Output" HQWPuZKRKWOVypjTgTbGx/value
+          visualData: 1274.2622826392683/254.32784662724612/330/65//
   metadata:
     description: Example to run via rivet-node
     id: vHpwmvjUYbE-MQJ7H_sV_

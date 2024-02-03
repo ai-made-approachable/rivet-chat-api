@@ -1,7 +1,11 @@
 {
     "file": "./example.rivet-project",
     "graphName": "chat-history",
-    "nodeType": "chat",
-    "nodeName": "Output (Chat)",
-    "graphInput": "input"
-}
+    "graphInputName": "input",
+    "streamingOutput": {
+      "nodeType": "chat",
+      "nodeName": "Output (Chat)"
+    },
+    "returnGraphOutput": false,
+    "graphOutputName": "output"
+  }
