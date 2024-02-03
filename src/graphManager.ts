@@ -3,7 +3,8 @@ import {
     loadProjectFromString,
     createProcessor,
     NodeRunGraphOptions,
-    ChatMessage
+    ChatMessage,
+    NodeDatasetProvider
 } from '@ironclad/rivet-node';
 import config from 'config';
 import fs from 'fs/promises';
@@ -33,6 +34,13 @@ class GraphManager {
         const projectContent = await fs.readFile(config.get('file'), 'utf8');
         const project = loadProjectFromString(projectContent);
         const graphInput = config.get('graphInputName') as string;
+        // Get datasetprovider so Rivet internal datasets can also be used
+        const datasetOptions = {
+            save: true,
+            filePath: config.get('file'),
+        };
+        
+        const datasetProvider = await NodeDatasetProvider.fromProjectFile(config.get('file'), datasetOptions);
 
         const options = {
           graph: config.get('graphName'),
@@ -50,6 +58,7 @@ class GraphManager {
           },
           openAiKey: process.env.OPEN_API_KEY,
           remoteDebugger: this.debuggerServer,
+          datasetProvider: datasetProvider
       } satisfies NodeRunGraphOptions;
 
         console.log('Creating processor');
