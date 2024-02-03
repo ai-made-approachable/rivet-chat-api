@@ -1,4 +1,4 @@
-import { startDebuggerServer, loadProjectFromString, createProcessor } from '@ironclad/rivet-node';
+import { startDebuggerServer, loadProjectFromString, createProcessor, NodeDatasetProvider } from '@ironclad/rivet-node';
 import config from 'config';
 import fs from 'fs/promises';
 class GraphManager {
@@ -24,6 +24,12 @@ class GraphManager {
         const projectContent = await fs.readFile(config.get('file'), 'utf8');
         const project = loadProjectFromString(projectContent);
         const graphInput = config.get('graphInputName');
+        // Get datasetprovider so Rivet internal datasets can also be used
+        const datasetOptions = {
+            save: true,
+            filePath: config.get('file'), // replace with your file path
+        };
+        const datasetProvider = await NodeDatasetProvider.fromProjectFile(config.get('file'), datasetOptions);
         const options = {
             graph: config.get('graphName'),
             inputs: {
@@ -37,6 +43,7 @@ class GraphManager {
             },
             openAiKey: process.env.OPEN_API_KEY,
             remoteDebugger: this.debuggerServer,
+            datasetProvider: datasetProvider
         };
         console.log('Creating processor');
         // Do not fail application on error
