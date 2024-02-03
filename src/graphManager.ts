@@ -32,7 +32,7 @@ class GraphManager {
         this.startDebuggerServerIfNeeded();
         const projectContent = await fs.readFile(config.get('file'), 'utf8');
         const project = loadProjectFromString(projectContent);
-        const graphInput = config.get('graphInput') as string;
+        const graphInput = config.get('graphInputName') as string;
 
         const options = {
           graph: config.get('graphName'),
@@ -65,8 +65,8 @@ class GraphManager {
             for await (const event of processor.events()) {
                 if (
                     event.type === 'partialOutput' &&
-                    event.node.type === config.get('nodeType') &&
-                    event.node.title === config.get('nodeName')
+                    event.node.type === config.get('streamingOutput.nodeType') &&
+                    event.node.title === config.get('streamingOutput.nodeName')
                 ) {
                     const content = (event.outputs as any).response.value;
                     this.output = content; // Update the output variable with the content
@@ -81,7 +81,11 @@ class GraphManager {
 
             console.log('Finished processing events'); // Debugging line
 
-            await runPromise;
+            const finalOutputs = await runPromise;
+            // Also return the graph output if returnGraphOutput is configured as true
+            if(config.get('returnGraphOutput')) {
+                yield finalOutputs[config.get('graphOutputName')].value;
+            }
             this.isRunning = false;
 
             console.log('runGraph finished'); // Debugging line
@@ -91,7 +95,7 @@ class GraphManager {
             this.isRunning = false;
         }
     }
-
+    
     getOutput() {
         return this.output;
     }
