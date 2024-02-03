@@ -3,9 +3,11 @@
     "graphName": "chat-history",
     "graphInputName": "input",
     "streamingOutput": {
-      "nodeType": "chat",
-      "nodeName": "Output (Chat)"
+        "nodeType": "chat",
+        "nodeName": "Output (Chat)"
     },
     "returnGraphOutput": false,
-    "graphOutputName": "output"
-  }
+    "graphOutputName": "output",
+    "textToSpeech": false,
+    "textToSpeechVoice": "onyx"
+}

@@ -1,5 +1,7 @@
 import express from 'express';
 import { graphManager } from './graphManager.js';
+import { textToSpeech } from './textToSpeech.js';
+import config from 'config';
 
 const app = express();
 const port = 3100;
@@ -23,6 +25,9 @@ app.post('/chat/completions', async (req, res) => {
         system_fingerprint: null,
     };
 
+    // Initialize an empty string to hold all the chunks
+    let allChunks = '';
+
     // Iterate over the chunks and send each one as soon as it's ready
     for await (const chunk of graphManager.runGraph(messages)) {
         const chunkData = {
@@ -37,6 +42,16 @@ app.post('/chat/completions', async (req, res) => {
             ],
         };
         res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
+
+        // Add the chunk to allChunks
+        if (chunk && chunk.trim().length > 0) {
+            allChunks += chunk + ' ';
+        }
+    }
+
+    // Convert allChunks to speech and play it back
+    if (allChunks.trim().length > 0 && config.get('textToSpeech')) {
+        await textToSpeech(allChunks);
     }
 
     // Send the final '[DONE]' message

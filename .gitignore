@@ -3,3 +3,5 @@
 /dist/*
 example.rivet-project
 /config/
+/audio/*
+config.gypi

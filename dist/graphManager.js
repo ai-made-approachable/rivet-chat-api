@@ -27,7 +27,7 @@ class GraphManager {
         // Get datasetprovider so Rivet internal datasets can also be used
         const datasetOptions = {
             save: true,
-            filePath: config.get('file'), // replace with your file path
+            filePath: config.get('file'),
         };
         const datasetProvider = await NodeDatasetProvider.fromProjectFile(config.get('file'), datasetOptions);
         const options = {

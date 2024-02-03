@@ -93,7 +93,7 @@ class GraphManager {
             const finalOutputs = await runPromise;
             // Also return the graph output if returnGraphOutput is configured as true
             if(config.get('returnGraphOutput')) {
-                yield finalOutputs[config.get('graphOutputName')].value;
+                yield finalOutputs[config.get('graphOutputName') as string].value;
             }
             this.isRunning = false;
 
