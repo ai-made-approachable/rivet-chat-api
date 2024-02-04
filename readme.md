@@ -16,6 +16,13 @@ Currently not supported (maybe added in the future):
 
 ![Chat UI for Rivet!](/chat_ui.png "Chat UI for Rivet!")
 
+# Last updates 04. Feb 2024
+- Now supports parallel requesting. So multiple users can chat with the same rivet graph at the same time
+- Multiple rivet graphs/projects can be served on different ports
+- API Key was added for security
+- Some experimental text-to-speech integration of whisper
+- Better error handling, so failed Rivet graphs will not break the application
+
 # Project setup
 For simplicity all is explained for Visual Studio Code. You can of course run it in other IDEs.
 

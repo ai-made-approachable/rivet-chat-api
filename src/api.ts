@@ -4,6 +4,7 @@ import { GraphManager } from './graphManager.js'; // Adjust the import to use th
 import { textToSpeech } from './textToSpeech.js';
 import config from 'config';
 
+const apiKey = config.get('api_key') as string;
 const configs = config.get('servers') as ServerConfig[];
 
 configs.forEach((serverConfig: ServerConfig) => {
@@ -14,6 +15,14 @@ configs.forEach((serverConfig: ServerConfig) => {
     const graphManager = new GraphManager(serverConfig);
 
     app.use(express.json());
+
+    app.use((req, res, next) => {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || authHeader !== `Bearer ${apiKey}`) {
+            return res.status(403).json({ message: 'Forbidden - Invalid API Key' });
+        }
+        next();
+    });
 
     app.post('/chat/completions', async (req, res) => {
         const messages = req.body.messages.slice(1).map(({ role: type, content: message }) => ({ type, message }));
@@ -49,9 +58,9 @@ configs.forEach((serverConfig: ServerConfig) => {
                 allChunks += chunk + ' ';
             }
         }
-
+        type VoiceType = "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
         if (allChunks.trim().length > 0 && serverConfig.textToSpeech) {
-            //await textToSpeech(allChunks, serverConfig); // Assuming textToSpeech can accept config
+            await textToSpeech(allChunks, serverConfig.textToSpeechVoice as VoiceType);
         }
 
         res.write('data: [DONE]\n\n');

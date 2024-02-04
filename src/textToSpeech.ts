@@ -2,17 +2,18 @@ import { OpenAI } from 'openai';
 import Speaker from 'speaker';
 import { spawn } from 'child_process';
 import { Speech } from 'openai/resources/audio/speech';
-import config from 'config';
 
 const openai = new OpenAI({
     apiKey: process.env.OPEN_API_KEY,
 });
 
-export async function textToSpeech(text: string): Promise<void> {
+type VoiceType = "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
+
+export async function textToSpeech(text: string, voice: VoiceType): Promise<void> {
     const params: Speech.SpeechCreateParams = {
         input: text,
         model: 'tts-1',
-        voice: config.get('textToSpeechVoice'),
+        voice: voice,
         response_format: 'mp3',
         speed: 1.1,
     };

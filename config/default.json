@@ -1,4 +1,5 @@
 {
+    "api_key": "80f946e4-04ba-4687-8c9e-bd33337f0f90",
     "servers": [
       {
         "file": "./example.rivet-project",
@@ -10,7 +11,7 @@
         },
         "returnGraphOutput": false,
         "graphOutputName": "output",
-        "textToSpeech": false,
+        "textToSpeech": true,
         "textToSpeechVoice": "onyx",
         "port": 3100
       },

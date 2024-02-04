@@ -1,6 +1,8 @@
 import express from 'express';
 import { GraphManager } from './graphManager.js'; // Adjust the import to use the class
+import { textToSpeech } from './textToSpeech.js';
 import config from 'config';
+const apiKey = config.get('api_key');
 const configs = config.get('servers');
 configs.forEach((serverConfig) => {
     const app = express();
@@ -8,6 +10,13 @@ configs.forEach((serverConfig) => {
     // Create a new instance of GraphManager for each configuration
     const graphManager = new GraphManager(serverConfig);
     app.use(express.json());
+    app.use((req, res, next) => {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || authHeader !== `Bearer ${apiKey}`) {
+            return res.status(403).json({ message: 'Forbidden - Invalid API Key' });
+        }
+        next();
+    });
     app.post('/chat/completions', async (req, res) => {
         const messages = req.body.messages.slice(1).map(({ role: type, content: message }) => ({ type, message }));
         res.setHeader('Content-Type', 'application/json');
@@ -38,7 +47,7 @@ configs.forEach((serverConfig) => {
             }
         }
         if (allChunks.trim().length > 0 && serverConfig.textToSpeech) {
-            //await textToSpeech(allChunks, serverConfig); // Assuming textToSpeech can accept config
+            await textToSpeech(allChunks, serverConfig.textToSpeechVoice);
         }
         res.write('data: [DONE]\n\n');
         res.end();
