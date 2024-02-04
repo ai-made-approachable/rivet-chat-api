@@ -1,13 +1,32 @@
 {
-    "file": "./example.rivet-project",
-    "graphName": "chat-history",
-    "graphInputName": "input",
-    "streamingOutput": {
-        "nodeType": "chat",
-        "nodeName": "Output (Chat)"
-    },
-    "returnGraphOutput": false,
-    "graphOutputName": "output",
-    "textToSpeech": false,
-    "textToSpeechVoice": "onyx"
-}
+    "servers": [
+      {
+        "file": "./example.rivet-project",
+        "graphName": "chat-history",
+        "graphInputName": "input",
+        "streamingOutput": {
+          "nodeType": "chat",
+          "nodeName": "Output (Chat)"
+        },
+        "returnGraphOutput": false,
+        "graphOutputName": "output",
+        "textToSpeech": false,
+        "textToSpeechVoice": "onyx",
+        "port": 3100
+      },
+      {
+        "file": "./example2.rivet-project",
+        "graphName": "other_graph",
+        "graphInputName": "input",
+        "streamingOutput": {
+          "nodeType": "chat",
+          "nodeName": "Output (Chat)"
+        },
+        "returnGraphOutput": false,
+        "graphOutputName": "output",
+        "textToSpeech": false,
+        "textToSpeechVoice": "onyx",
+        "port": 3101
+      }
+    ]
+  }
