@@ -11,7 +11,7 @@
         },
         "returnGraphOutput": false,
         "graphOutputName": "output",
-        "textToSpeech": true,
+        "textToSpeech": false,
         "textToSpeechVoice": "onyx",
         "port": 3100
       },
