@@ -50,6 +50,15 @@ Just press "Run -> Start Debugging" in Visual Studio Code.
 - Open ```config/default.json```
 - Change the values accordingly to your graph (file, graphName, graphInput ...)
 
+## Using plugins
+If you want to use plugins, you need to import and register them first in graphManager.ts
+
+Example for mongoDB Plugin
+```
+import rivetMongoDbPlugin from 'rivet-plugin-mongodb';
+import * as Rivet from '@ironclad/rivet-node';
+Rivet.globalRivetNodeRegistry.registerPlugin(rivetMongoDbPlugin(Rivet));
+```
 
 ---
 # Chat setup
