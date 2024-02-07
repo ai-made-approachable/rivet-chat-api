@@ -97,6 +97,8 @@ Note: Also see instructions on: https://github.com/mckaywrigley/chatbot-ui
 ## Configure the Chat-UI
 1. When you start "chatbot-ui" for the first time enter e-mail + password (don't worry, all stays locally on your pc)
 1. In the sidebar press on "Models" (Stars-Icon) and on "New Model"
-1. Enter any name. but use ```gpt-4-turbo-preview``` as ModelID and ```http://localhost:3100/``` as Base URL. For API Key you can enter anything (Note: when adding multiple graphs, you need to chose another model from this list for each one of them. Otherwise Chatbot-UI does not properly work: https://github.com/mckaywrigley/chatbot-ui/blob/3cfb3f3762ef3237800c92d6598c779ea4caf757/lib/chat-setting-limits.ts#L63)
+1. Enter any name. but use ```gpt-4-turbo-preview``` as ModelID (Note: when adding multiple graphs, you need to chose another model from this list for each one of them. Otherwise Chatbot-UI does not properly work: https://github.com/mckaywrigley/chatbot-ui/blob/3cfb3f3762ef3237800c92d6598c779ea4caf757/lib/chat-setting-limits.ts#L63)
+1. Enter ```http://localhost:3100/``` as Base URL (change port accordingly if you run multiple graphs according to default.json) 
+1. As API_Key set the value you defined in your config/default.json file
 1. Open the model selection in the top-right corner and select your custom model
 1. Have fun chatting
