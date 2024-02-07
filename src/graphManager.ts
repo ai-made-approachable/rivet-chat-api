@@ -75,7 +75,7 @@ export class GraphManager {
                     ),
                 },
             },
-            openAiKey: process.env.OPEN_API_KEY,
+            openAiKey: process.env.OPENAI_API_KEY,
             remoteDebugger: DebuggerServer.getInstance().startDebuggerServerIfNeeded(),
             datasetProvider: datasetProvider
         };
