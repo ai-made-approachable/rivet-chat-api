@@ -1,7 +1,6 @@
 import { ServerConfig } from './configTypes.js';
 import express from 'express';
 import { GraphManager } from './graphManager.js'; // Adjust the import to use the class
-import { textToSpeech } from './textToSpeech.js';
 import config from 'config';
 
 const apiKey = config.get('api_key') as string;
@@ -57,10 +56,6 @@ configs.forEach((serverConfig: ServerConfig) => {
             if (chunk && chunk.trim().length > 0) {
                 allChunks += chunk + ' ';
             }
-        }
-        type VoiceType = "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
-        if (allChunks.trim().length > 0 && serverConfig.textToSpeech) {
-            await textToSpeech(allChunks, serverConfig.textToSpeechVoice as VoiceType);
         }
 
         res.write('data: [DONE]\n\n');

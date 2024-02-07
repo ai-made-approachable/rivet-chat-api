@@ -4,3 +4,5 @@ example.rivet-project
 /config/
 /audio/*
 config.gypi
+/src/archive/
+/dist/archive/

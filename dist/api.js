@@ -1,6 +1,5 @@
 import express from 'express';
 import { GraphManager } from './graphManager.js'; // Adjust the import to use the class
-import { textToSpeech } from './textToSpeech.js';
 import config from 'config';
 const apiKey = config.get('api_key');
 const configs = config.get('servers');
@@ -45,9 +44,6 @@ configs.forEach((serverConfig) => {
             if (chunk && chunk.trim().length > 0) {
                 allChunks += chunk + ' ';
             }
-        }
-        if (allChunks.trim().length > 0 && serverConfig.textToSpeech) {
-            await textToSpeech(allChunks, serverConfig.textToSpeechVoice);
         }
         res.write('data: [DONE]\n\n');
         res.end();

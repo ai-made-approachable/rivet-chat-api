@@ -11,8 +11,6 @@
         },
         "returnGraphOutput": false,
         "graphOutputName": "output",
-        "textToSpeech": false,
-        "textToSpeechVoice": "onyx",
         "port": 3100
       },
       {
@@ -25,8 +23,6 @@
         },
         "returnGraphOutput": false,
         "graphOutputName": "output",
-        "textToSpeech": false,
-        "textToSpeechVoice": "onyx",
         "port": 3101
       }
     ]

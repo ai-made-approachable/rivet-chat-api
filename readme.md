@@ -20,7 +20,6 @@ Currently not supported (maybe added in the future):
 - Now supports parallel requesting. So multiple users can chat with the same rivet graph at the same time
 - Multiple rivet graphs/projects can be served on different ports
 - API Key was added for security
-- Some experimental text-to-speech integration of whisper
 - Better error handling, so failed Rivet graphs will not break the application
 
 # Project setup
@@ -44,6 +43,7 @@ For simplicity all is explained for Visual Studio Code. You can of course run it
 
 ## Running the project
 Just press "Run -> Start Debugging" in Visual Studio Code.
+Continue with the "Chat setup". The URLs displayed are the endpoints to connect the chat to rivet-chat-api.
 
 ## Use your own project files
 - Make sure your project file has an input of type "chat-message" and array checked (Type: chat-message[])
