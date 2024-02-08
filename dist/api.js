@@ -49,7 +49,9 @@ configs.forEach((serverConfig) => {
         res.end();
     });
     app.listen(port, () => {
-        console.log(`Server running at http://localhost:${port}/`);
+        const environment = process.env.NODE_ENV;
+        const serverUrl = environment === 'production' ? `0.0.0.0:${port}` : `localhost:${port}`;
+        console.log(`Server running at http://${serverUrl}/`);
     });
 });
 //# sourceMappingURL=api.js.map

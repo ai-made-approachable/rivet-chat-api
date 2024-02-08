@@ -6,6 +6,7 @@
     "scripts": {
         "build": "tsc",
         "start": "node dist/api.js",
+        "start:prod": "NODE_ENV=production node dist/api.js",
         "test": "jest"
     },
     "type": "module",

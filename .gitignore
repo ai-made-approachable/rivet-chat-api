@@ -1,7 +1,6 @@
 /.vscode/launch.json
 /node_modules/
 example.rivet-project
-/config/
 /audio/*
 config.gypi
 /src/archive/

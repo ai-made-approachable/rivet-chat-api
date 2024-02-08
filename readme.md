@@ -90,7 +90,6 @@ Note: Also see instructions on: https://github.com/mckaywrigley/chatbot-ui
 ## Starting the Chat-UI
 1. Make sure Docker is running
 1. Navigate to your "chatbot-ui" folder
-1. Enter ```supabase start```
 1. Enter ```npm run chat```
 1. Navigate to the URL shown to you, usually: http://localhost:3000
 
