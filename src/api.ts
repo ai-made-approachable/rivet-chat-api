@@ -63,6 +63,20 @@ configs.forEach((serverConfig: ServerConfig) => {
         res.end();
     });
 
+    app.get('/v1/models', (req, res) => {
+        res.json({
+            "object": "list",
+            "data": [
+                {
+                    "id": "rivet",
+                    "object": "rivet",
+                    "created": 1686935002,
+                    "owned_by": "ai_made_approachable"
+                }
+            ]
+        });
+    });
+
     if (environment === 'production') {
         // For production, listen on all IPv6 addresses
         app.listen(port, '::', () => {
