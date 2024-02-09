@@ -86,17 +86,15 @@ app.get('/v1/models', (req, res) => {
             return res.status(500).json({ message: 'Internal server error' });
         }
 
-        const data = files
-            .filter(file => file.endsWith('.rivet-project')) // Filter files
-            .map(file => {
-                const stats = fs.statSync(path.join(directoryPath, file));
-                return {
-                    id: file,
-                    object: file,
-                    created: Math.floor(stats.birthtimeMs / 1000),
-                    owned_by: "user",
-                };
-            });
+        const data = files.map(file => {
+            const stats = fs.statSync(path.join(directoryPath, file));
+            return {
+                id: file,
+                object: "model",
+                created: Math.floor(stats.birthtimeMs / 1000),
+                owned_by: "user",
+            };
+        });
 
         res.json({ object: "list", data });
     });
