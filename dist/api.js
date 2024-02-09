@@ -3,6 +3,7 @@ import { GraphManager } from './graphManager.js'; // Adjust the import to use th
 import config from 'config';
 const apiKey = config.get('api_key');
 const configs = config.get('servers');
+const environment = process.env.NODE_ENV;
 configs.forEach((serverConfig) => {
     const app = express();
     const port = serverConfig.port;
@@ -48,10 +49,17 @@ configs.forEach((serverConfig) => {
         res.write('data: [DONE]\n\n');
         res.end();
     });
-    app.listen(port, () => {
-        const environment = process.env.NODE_ENV;
-        const serverUrl = environment === 'production' ? `0.0.0.0:${port}` : `localhost:${port}`;
-        console.log(`Server running at http://${serverUrl}/`);
-    });
+    if (environment === 'production') {
+        // For production, listen on all IPv6 addresses
+        app.listen(port, '::', () => {
+            console.log(`Server listening on [::]:${port} (IPv6)`);
+        });
+    }
+    else {
+        // For non-production environments, listen on localhost (IPv4)
+        app.listen(port, () => {
+            console.log(`Server running at http://localhost:${port}/`);
+        });
+    }
 });
 //# sourceMappingURL=api.js.map

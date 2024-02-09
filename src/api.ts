@@ -5,6 +5,7 @@ import config from 'config';
 
 const apiKey = config.get('api_key') as string;
 const configs = config.get('servers') as ServerConfig[];
+const environment = process.env.NODE_ENV;
 
 configs.forEach((serverConfig: ServerConfig) => {
     const app = express();
@@ -62,9 +63,15 @@ configs.forEach((serverConfig: ServerConfig) => {
         res.end();
     });
 
-    app.listen(port, () => {
-        const environment = process.env.NODE_ENV;
-        const serverUrl = environment === 'production' ? `0.0.0.0:${port}` : `localhost:${port}`;
-        console.log(`Server running at http://${serverUrl}/`);
-    });
+    if (environment === 'production') {
+        // For production, listen on all IPv6 addresses
+        app.listen(port, '::', () => {
+            console.log(`Server listening on [::]:${port} (IPv6)`);
+        });
+    } else {
+        // For non-production environments, listen on localhost (IPv4)
+        app.listen(port, () => {
+            console.log(`Server running at http://localhost:${port}/`);
+        });
+    }
 });
