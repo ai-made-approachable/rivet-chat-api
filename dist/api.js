@@ -79,7 +79,7 @@ app.get('/v1/models', (req, res) => {
             const stats = fs.statSync(path.join(directoryPath, file));
             return {
                 id: file,
-                object: file,
+                object: "model",
                 created: Math.floor(stats.birthtimeMs / 1000),
                 owned_by: "user",
             };
