@@ -78,10 +78,10 @@ Note: This installation is a bit long, but it is a one time thing!
 1. Make sure Docker is running
 1. Start Supabase ```supabase start```
 1. Create file .env.local ```cp .env.local.example .env.local```
-1. Get the required values by running ```supabase status```
-1. Copy "API URL" value
 1. Open ".env.local" in Visual Studio Code (in chatbot-ui root folder)
-1. Insert copied value for "NEXT_PUBLIC_SUPABASE_URL" and save
+1. Get the required values by running ```supabase status```
+1. Copy "API URL" value and insert it into "NEXT_PUBLIC_SUPABASE_URL"
+1. Copy "anon key" and insert it into "NEXT_PUBLIC_SUPABASE_ANON_KEY"
 1. Open ```supabase/migrations/20240108234540_setup.sql``` file
 1. Replace "service_role_key" with the value from ```supabase status``` and save
 
