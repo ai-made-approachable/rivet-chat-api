@@ -73,11 +73,13 @@ app.get('/v1/models', (req, res) => {
             console.error('Unable to scan directory:', err);
             return res.status(500).json({ message: 'Internal server error' });
         }
-        const data = files.map(file => {
+        const data = files
+            .filter(file => file.endsWith('.rivet-project')) // Filter files
+            .map(file => {
             const stats = fs.statSync(path.join(directoryPath, file));
             return {
                 id: file,
-                object: 'model',
+                object: file,
                 created: Math.floor(stats.birthtimeMs / 1000),
                 owned_by: "user",
             };
