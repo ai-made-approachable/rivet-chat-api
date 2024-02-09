@@ -19,7 +19,7 @@ app.use((req, res, next) => {
     next();
 });
 // Dynamic model loading for chat completions based on the model specified in the request body
-app.post('/chat/completions', async (req, res) => {
+app.post('/v1/chat/completions', async (req, res) => {
     const modelId = req.body.model; // Get the model identifier from the request body
     if (!modelId) {
         return res.status(400).json({ message: 'Model identifier is required' });
