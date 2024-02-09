@@ -1,91 +1,107 @@
-import { ServerConfig } from './configTypes.js';
 import express from 'express';
-import { GraphManager } from './graphManager.js'; // Adjust the import to use the class
-import config from 'config';
+import { GraphManager } from './graphManager.js';
+import fs from 'fs';
+import path from 'path';
 
-const apiKey = config.get('api_key') as string;
-const configs = config.get('servers') as ServerConfig[];
+const app = express();
+const port = process.env.PORT || 3100; // Default port or environment variable
 const environment = process.env.NODE_ENV;
+console.log(environment)
+const apiKey = process.env.RIVET_CHAT_API_KEY;
 
-configs.forEach((serverConfig: ServerConfig) => {
-    const app = express();
-    const port = serverConfig.port;
+app.use(express.json());
 
-    // Create a new instance of GraphManager for each configuration
-    const graphManager = new GraphManager(serverConfig);
-
-    app.use(express.json());
-
-    app.use((req, res, next) => {
+// Middleware for API Key validation in production
+app.use((req, res, next) => {
+    if (environment === 'production') {
         const authHeader = req.headers.authorization;
         if (!authHeader || authHeader !== `Bearer ${apiKey}`) {
             return res.status(403).json({ message: 'Forbidden - Invalid API Key' });
         }
-        next();
-    });
+    }
+    next();
+});
 
-    app.post('/chat/completions', async (req, res) => {
-        const messages = req.body.messages.slice(1).map(({ role: type, content: message }) => ({ type, message }));
+// Dynamic model loading for chat completions based on the model specified in the request body
+app.post('/chat/completions', async (req, res) => {
+    const modelId = req.body.model; // Get the model identifier from the request body
+    if (!modelId) {
+        return res.status(400).json({ message: 'Model identifier is required' });
+    }
 
-        res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Transfer-Encoding', 'chunked');
+    const directoryPath = path.resolve(process.cwd(), './rivet');
+    const modelFilePath = path.join(directoryPath, modelId);
 
-        const commonData = {
-            id: 'chatcmpl-mockId12345',
-            object: 'chat.completion.chunk',
-            created: Date.now(),
-            model: 'rivet',
-            system_fingerprint: null,
-        };
+    // Check if the model file exists
+    if (!fs.existsSync(modelFilePath)) {
+        return res.status(404).json({ message: 'Model not found' });
+    }
 
-        let allChunks = '';
+    // Initialize GraphManager with the model
+    const graphManager = new GraphManager({ file: modelFilePath });
 
-        for await (const chunk of graphManager.runGraph(messages)) {
+    // Assuming "messages" is also part of the request body
+    const messages = req.body.messages;
+    if (!messages || !Array.isArray(messages)) {
+        return res.status(400).json({ message: 'Messages are required and must be an array' });
+    }
+
+    const processedMessages = messages.map(({ role: type, content: message }) => ({ type, message }));
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Transfer-Encoding', 'chunked');
+
+    const commonData = {
+        id: 'chatcmpl-mockId12345',
+        object: 'chat.completion.chunk',
+        created: Date.now(),
+        model: modelId, // Use the modelId from the request body
+        system_fingerprint: null,
+    };
+
+    try {
+        for await (const chunk of graphManager.runGraph(processedMessages)) {
             const chunkData = {
                 ...commonData,
-                choices: [
-                    {
-                        index: 0,
-                        delta: { content: chunk },
-                        logprobs: null,
-                        finish_reason: null,
-                    },
-                ],
+                choices: [{ index: 0, delta: { content: chunk }, logprobs: null, finish_reason: null }],
             };
             res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
+        }
+        res.write('data: [DONE]\n\n');
+    } catch (error) {
+        console.error('Error processing graph:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        res.end();
+    }
+});
 
-            if (chunk && chunk.trim().length > 0) {
-                allChunks += chunk + ' ';
-            }
+
+// Endpoint to list available models
+app.get('/v1/models', (req, res) => {
+    const directoryPath = path.resolve(process.cwd(), './rivet');
+    fs.readdir(directoryPath, (err, files) => {
+        if (err) {
+            console.error('Unable to scan directory:', err);
+            return res.status(500).json({ message: 'Internal server error' });
         }
 
-        res.write('data: [DONE]\n\n');
-        res.end();
-    });
+        const data = files.map(file => {
+            const stats = fs.statSync(path.join(directoryPath, file));
+            return {
+                id: file,
+                object: 'model',
+                created: Math.floor(stats.birthtimeMs / 1000),
+                owned_by: "user",
+            };
+        });
 
-    app.get('/v1/models', (req, res) => {
-        res.json({
-            "object": "list",
-            "data": [
-                {
-                    "id": "rivet",
-                    "object": "rivet",
-                    "created": 1686935002,
-                    "owned_by": "ai_made_approachable"
-                }
-            ]
-        });
+        res.json({ object: "list", data });
     });
+});
 
-    if (environment === 'production') {
-        // For production, listen on all IPv6 addresses
-        app.listen(port, '::', () => {
-            console.log(`Server listening on [::]:${port} (IPv6)`);
-        });
-    } else {
-        // For non-production environments, listen on localhost (IPv4)
-        app.listen(port, () => {
-            console.log(`Server running at http://localhost:${port}/`);
-        });
-    }
+const host = environment === 'production' ? '::' : 'localhost';
+
+app.listen(Number(port), host, () => {
+    console.log(`Server running at http://${host}:${port}/`);
 });

@@ -1,9 +1,9 @@
 import { startDebuggerServer, loadProjectFromString, createProcessor, NodeDatasetProvider } from '@ironclad/rivet-node';
 import fs from 'fs/promises';
+import path from 'path';
 class DebuggerServer {
     constructor() {
         this.debuggerServer = null; // Consider typing this more precisely if possible
-        // Private constructor to prevent direct construction calls with the `new` operator.
     }
     static getInstance() {
         if (!DebuggerServer.instance) {
@@ -16,9 +16,8 @@ class DebuggerServer {
             this.debuggerServer = startDebuggerServer({});
             console.log('Debugger server started');
         }
-        return this.debuggerServer; // Return the debugger server instance
+        return this.debuggerServer;
     }
-    // Optionally, provide a method to directly access the debuggerServer
     getDebuggerServer() {
         return this.debuggerServer;
     }
@@ -29,41 +28,43 @@ export class GraphManager {
         this.config = config;
     }
     async *runGraph(messages) {
-        console.log('runGraph called with config:', this.config.file);
-        DebuggerServer.getInstance();
-        const projectContent = await fs.readFile(this.config.file, 'utf8');
-        const project = loadProjectFromString(projectContent);
-        const graphInput = this.config.graphInputName;
-        const datasetOptions = {
-            save: true,
-            filePath: this.config.file,
-        };
-        const datasetProvider = await NodeDatasetProvider.fromProjectFile(this.config.file, datasetOptions);
-        const options = {
-            graph: this.config.graphName,
-            inputs: {
-                [graphInput]: {
-                    type: 'chat-message[]',
-                    value: messages.map((message) => ({
-                        type: message.type,
-                        message: message.message,
-                    })),
-                },
-            },
-            openAiKey: process.env.OPENAI_API_KEY,
-            remoteDebugger: DebuggerServer.getInstance().startDebuggerServerIfNeeded(),
-            datasetProvider: datasetProvider
-        };
-        console.log('Creating processor');
+        // Assuming config.file now contains just the filename of the model
+        const modelFilePath = path.resolve(process.cwd(), './rivet', this.config.file);
+        console.log('runGraph called with model file:', modelFilePath);
+        // Ensure the DebuggerServer is started
+        DebuggerServer.getInstance().startDebuggerServerIfNeeded();
         try {
+            const projectContent = await fs.readFile(modelFilePath, 'utf8');
+            const project = loadProjectFromString(projectContent);
+            const graphInput = this.config.graphInputName;
+            const datasetOptions = {
+                save: true,
+                filePath: modelFilePath,
+            };
+            const datasetProvider = await NodeDatasetProvider.fromProjectFile(modelFilePath, datasetOptions);
+            const options = {
+                graph: this.config.graphName,
+                inputs: {
+                    [graphInput]: {
+                        type: 'chat-message[]',
+                        value: messages.map((message) => ({
+                            type: message.type,
+                            message: message.message,
+                        })),
+                    },
+                },
+                openAiKey: process.env.OPENAI_API_KEY,
+                remoteDebugger: DebuggerServer.getInstance().getDebuggerServer(),
+                datasetProvider: datasetProvider,
+            };
+            console.log('Creating processor');
             const { processor, run } = createProcessor(project, options);
             const runPromise = run();
             console.log('Starting to process events');
             let lastContent = '';
             for await (const event of processor.events()) {
                 if (event.type === 'partialOutput' &&
-                    event.node.type === this.config.streamingOutput.nodeType &&
-                    event.node.title === this.config.streamingOutput.nodeName) {
+                    event.node.description === "output") {
                     const content = event.outputs.response.value;
                     if (content.startsWith(lastContent)) {
                         const delta = content.slice(lastContent.length);
@@ -74,13 +75,11 @@ export class GraphManager {
             }
             console.log('Finished processing events');
             const finalOutputs = await runPromise;
-            if (this.config.returnGraphOutput) {
-                yield finalOutputs[this.config.graphOutputName].value;
-            }
+            yield finalOutputs["output"].value;
             console.log('runGraph finished');
         }
         catch (error) {
-            console.error(error);
+            console.error('Error in runGraph:', error);
         }
     }
 }

@@ -1,0 +1,97 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    73oXPT85j5KpPwLgdK9XT:
+      metadata:
+        description: ""
+        id: 73oXPT85j5KpPwLgdK9XT
+        name: "#main"
+      nodes:
+        '[TEz5tWCj0Olj4HOG7ebKg]:subGraph "Subgraph"':
+          data:
+            graphId: Mi8XnPKsJfpGo-zMQEsbt
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          visualData: 556.0632644809468/365.5902718509771/330/74/var(--node-color-6)/var(--grey-darkish)
+        '[sFjlK_burHE4fPR_6O4E4]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: input
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Subgraph" TEz5tWCj0Olj4HOG7ebKg/input
+          visualData: 143.40269300026316/348.4471027093463/330/67/var(--node-color-3)/var(--grey-darkish)
+    Mi8XnPKsJfpGo-zMQEsbt:
+      metadata:
+        description: ""
+        id: Mi8XnPKsJfpGo-zMQEsbt
+        name: subgraph
+      nodes:
+        '[ITEdkdTZ6A7AL7v4hpeLx]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1282.1439102243487/641.0082941914504/330/70//
+        '[YlqSZ1x0GyjVGPEIHyx8Y]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: input
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Output (Chat)" cdSRVtYcg0vx6qVezYyCR/prompt
+          visualData: 422.68428961016866/769.444118716271/330/66/var(--node-color-3)/var(--grey-darkish)
+        '[cdSRVtYcg0vx6qVezYyCR]:chat "Output (Chat)"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            headers: []
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            parallelFunctionCalling: true
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          description: output
+          outgoingConnections:
+            - response->"Graph Output" ITEdkdTZ6A7AL7v4hpeLx/value
+          visualData: 905.8380971034192/593.3676065885012/230/72//
+        '[ePeC7a04Gz-2BXGgQAC39]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: system
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Output (Chat)" cdSRVtYcg0vx6qVezYyCR/systemPrompt
+          visualData: 460.0080605268922/522.8185842939455/280/43//
+        '[xoGekNUFeFXRoGo78zQuF]:text "Text"':
+          data:
+            text: You are the local tennis couch. Trying to help your student to play the
+              best tennis of his life!
+          outgoingConnections:
+            - output->"Prompt" ePeC7a04Gz-2BXGgQAC39/input
+          visualData: 416/319/330/45//
+  metadata:
+    description: ""
+    id: rmdGTQwf7rcibNo1vDt2I
+    mainGraphId: 73oXPT85j5KpPwLgdK9XT
+    title: Example project2
+  plugins: []
