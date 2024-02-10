@@ -4,3 +4,4 @@
 config.gypi
 /src/archive/
 /dist/archive/
+yarn.lock

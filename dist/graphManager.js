@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 class DebuggerServer {
     constructor() {
-        this.debuggerServer = null; // Consider typing this more precisely if possible
+        this.debuggerServer = null;
     }
     static getInstance() {
         if (!DebuggerServer.instance) {
@@ -24,24 +24,33 @@ class DebuggerServer {
 }
 DebuggerServer.instance = null;
 export class GraphManager {
-    constructor(config) {
-        this.config = config;
+    constructor(params) {
+        this.config = params.config || {};
+        this.modelContent = params.modelContent;
     }
     async *runGraph(messages) {
-        // Assuming config.file now contains just the filename of the model
-        const modelFilePath = path.resolve(process.cwd(), './rivet', this.config.file);
-        console.log('runGraph called with model file:', modelFilePath);
+        let projectContent;
         // Ensure the DebuggerServer is started
         DebuggerServer.getInstance().startDebuggerServerIfNeeded();
         try {
-            const projectContent = await fs.readFile(modelFilePath, 'utf8');
+            if (this.modelContent) {
+                // Use direct model content if provided
+                projectContent = this.modelContent;
+            }
+            else {
+                // Otherwise, read the model file from the filesystem
+                const modelFilePath = path.resolve(process.cwd(), './rivet', this.config.file);
+                console.log('runGraph called with model file:', modelFilePath);
+                projectContent = await fs.readFile(modelFilePath, 'utf8');
+            }
             const project = loadProjectFromString(projectContent);
             const graphInput = this.config.graphInputName;
             const datasetOptions = {
                 save: true,
-                filePath: modelFilePath,
+                // filePath should only be set if you're working with a file, adjust accordingly
+                filePath: this.modelContent ? undefined : path.resolve(process.cwd(), './rivet', this.config.file),
             };
-            const datasetProvider = await NodeDatasetProvider.fromProjectFile(modelFilePath, datasetOptions);
+            const datasetProvider = this.modelContent ? undefined : await NodeDatasetProvider.fromProjectFile(datasetOptions.filePath, datasetOptions);
             const options = {
                 graph: this.config.graphName,
                 inputs: {
@@ -75,7 +84,9 @@ export class GraphManager {
             }
             console.log('Finished processing events');
             const finalOutputs = await runPromise;
-            yield finalOutputs["output"].value;
+            if (finalOutputs && finalOutputs["output"]) {
+                yield finalOutputs["output"].value;
+            }
             console.log('runGraph finished');
         }
         catch (error) {

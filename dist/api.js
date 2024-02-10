@@ -2,10 +2,10 @@ import express from 'express';
 import { GraphManager } from './graphManager.js';
 import fs from 'fs';
 import path from 'path';
+import { authenticateAndGetJWT, listFiles, fetchFileContent } from './files.js';
 const app = express();
 const port = process.env.PORT || 3100; // Default port or environment variable
 const environment = process.env.NODE_ENV;
-console.log(environment);
 const apiKey = process.env.RIVET_CHAT_API_KEY;
 app.use(express.json());
 // Middleware for API Key validation in production
@@ -20,19 +20,10 @@ app.use((req, res, next) => {
 });
 // Dynamic model loading for chat completions based on the model specified in the request body
 app.post('/v1/chat/completions', async (req, res) => {
-    const modelId = req.body.model; // Get the model identifier from the request body
+    const modelId = req.body.model;
     if (!modelId) {
         return res.status(400).json({ message: 'Model identifier is required' });
     }
-    const directoryPath = path.resolve(process.cwd(), './rivet');
-    const modelFilePath = path.join(directoryPath, modelId);
-    // Check if the model file exists
-    if (!fs.existsSync(modelFilePath)) {
-        return res.status(404).json({ message: 'Model not found' });
-    }
-    // Initialize GraphManager with the model
-    const graphManager = new GraphManager({ file: modelFilePath });
-    // Assuming "messages" is also part of the request body
     const messages = req.body.messages;
     if (!messages || !Array.isArray(messages)) {
         return res.status(400).json({ message: 'Messages are required and must be an array' });
@@ -44,48 +35,114 @@ app.post('/v1/chat/completions', async (req, res) => {
         id: 'chatcmpl-mockId12345',
         object: 'chat.completion.chunk',
         created: Date.now(),
-        model: modelId, // Use the modelId from the request body
+        model: modelId,
         system_fingerprint: null,
     };
-    try {
-        for await (const chunk of graphManager.runGraph(processedMessages)) {
-            const chunkData = {
-                ...commonData,
-                choices: [{ index: 0, delta: { content: chunk }, logprobs: null, finish_reason: null }],
-            };
-            res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
+    if (environment === 'production') {
+        try {
+            const token = await authenticateAndGetJWT();
+            if (!token) {
+                return res.status(401).json({ message: 'Failed to authenticate with Filebrowser' });
+            }
+            const filePath = `/${modelId}`; // Adjust based on your Filebrowser structure
+            const fileContent = await fetchFileContent(filePath, token);
+            if (!fileContent) {
+                return res.status(404).json({ message: 'Model not found on Filebrowser' });
+            }
+            // Initialize GraphManager with the model content from Filebrowser
+            // This step may require adjustments to GraphManager to accept file content directly
+            const graphManager = new GraphManager({ modelContent: fileContent });
+            for await (const chunk of graphManager.runGraph(processedMessages)) {
+                const chunkData = {
+                    ...commonData,
+                    choices: [{ index: 0, delta: { content: chunk }, logprobs: null, finish_reason: null }],
+                };
+                res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
+            }
+            res.write('data: [DONE]\n\n');
         }
-        res.write('data: [DONE]\n\n');
+        catch (error) {
+            console.error('Error processing graph:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+        finally {
+            res.end();
+        }
     }
-    catch (error) {
-        console.error('Error processing graph:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-    finally {
-        res.end();
+    else {
+        const directoryPath = path.resolve(process.cwd(), './rivet');
+        const modelFilePath = path.join(directoryPath, modelId);
+        if (!fs.existsSync(modelFilePath)) {
+            return res.status(404).json({ message: 'Model not found' });
+        }
+        const graphManager = new GraphManager({ config: { file: modelFilePath } });
+        try {
+            for await (const chunk of graphManager.runGraph(processedMessages)) {
+                const chunkData = {
+                    ...commonData,
+                    choices: [{ index: 0, delta: { content: chunk }, logprobs: null, finish_reason: null }],
+                };
+                res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
+            }
+            res.write('data: [DONE]\n\n');
+        }
+        catch (error) {
+            console.error('Error processing graph:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+        finally {
+            res.end();
+        }
     }
 });
-// Endpoint to list available models
-app.get('/v1/models', (req, res) => {
-    const directoryPath = path.resolve(process.cwd(), './rivet');
-    fs.readdir(directoryPath, (err, files) => {
-        if (err) {
-            console.error('Unable to scan directory:', err);
-            return res.status(500).json({ message: 'Internal server error' });
-        }
-        const data = files
-            .filter(file => file.endsWith('.rivet-project')) // Filter files
-            .map(file => {
-            const stats = fs.statSync(path.join(directoryPath, file));
-            return {
-                id: file,
+app.get('/v1/models', async (req, res) => {
+    // For prod get the contents from the filebrowser application
+    if (environment === 'production') {
+        try {
+            const token = await authenticateAndGetJWT();
+            if (!token) {
+                return res.status(401).json({ message: 'Failed to authenticate with Filebrowser' });
+            }
+            const files = await listFiles(token); // This should return the array of files
+            if (!files || !Array.isArray(files)) {
+                // If files is not an array, log the actual structure for debugging
+                console.error('Unexpected structure:', files);
+                return res.status(500).json({ message: 'Unexpected response structure from Filebrowser' });
+            }
+            const models = files.filter(file => file.extension === '.rivet-project').map(file => ({
+                id: file.name,
                 object: "model",
-                created: Math.floor(stats.birthtimeMs / 1000),
+                created: new Date(file.modified).getTime() / 1000, // Convert to Unix timestamp if needed
                 owned_by: "user",
-            };
+            }));
+            res.json({ object: "list", data: models });
+        }
+        catch (error) {
+            console.error('Error listing models from Filebrowser:', error);
+            return res.status(500).json({ message: 'Internal server error', error: error.message });
+        }
+    }
+    else {
+        // Local filesystem logic...
+        const directoryPath = path.resolve(process.cwd(), './rivet');
+        fs.readdir(directoryPath, (err, files) => {
+            if (err) {
+                console.error('Unable to scan directory:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            const models = files.filter(file => file.endsWith('.rivet-project')).map(file => {
+                const fullPath = path.join(directoryPath, file);
+                const stats = fs.statSync(fullPath);
+                return {
+                    id: file,
+                    object: "model",
+                    created: Math.floor(stats.birthtimeMs / 1000),
+                    owned_by: "user",
+                };
+            });
+            res.json({ object: "list", data: models });
         });
-        res.json({ object: "list", data });
-    });
+    }
 });
 const host = environment === 'production' ? '::' : 'localhost';
 app.listen(Number(port), host, () => {
