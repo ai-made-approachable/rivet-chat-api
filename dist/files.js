@@ -2,6 +2,7 @@ import axios from 'axios';
 // Use internal domain when online and public domain when testing locally
 const localDev = process.env.LOCAL_DEV === 'true';
 let filebrowserUrl = process.env.FILEBROWSER_DOMAIN;
+console.log(filebrowserUrl);
 export async function authenticateAndGetJWT() {
     const loginUrl = `${filebrowserUrl}/api/login`;
     const payload = {
