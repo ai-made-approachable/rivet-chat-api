@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+// Use internal domain when online and public domain when testing locally
+const localDev = process.env.LOCAL_DEV === 'true';
+let filebrowserUrl = "";
+if(localDev) {
+    filebrowserUrl = `https://${process.env.FILEBROWSER_PUBLIC_DOMAIN}`;
+}
+else {
+    filebrowserUrl = `http://${process.env.FILEBROWSER_DOMAIN}`;
+}
+
 export async function authenticateAndGetJWT() {
-  const loginUrl = `https://${process.env.FILEBROWSER_PUBLIC_DOMAIN}/api/login`;
+  const loginUrl = `${filebrowserUrl}/api/login`;
   const payload = {
     username: process.env.FILEBROWSER_USERNAME,
     password: process.env.FILEBROWSE_PASSWORD,
@@ -21,7 +31,7 @@ export async function authenticateAndGetJWT() {
 
 export async function listFiles(jwtToken) {
     try {
-      const url = `https://${process.env.FILEBROWSER_PUBLIC_DOMAIN}/api/resources/`;
+      const url = `${filebrowserUrl}/api/resources/`;
       const response = await axios.get(url, {
         headers: { 'X-AUTH': jwtToken }
       });
@@ -36,7 +46,7 @@ export async function listFiles(jwtToken) {
 export async function fetchFileContent(filePath, jwtToken) {
     try {
       // Construct the URL to access the specific file, including the auth token as a query parameter.
-      const fileUrl = `https://${process.env.FILEBROWSER_PUBLIC_DOMAIN}/api/raw${filePath}?auth=${jwtToken}`;
+      const fileUrl = `${filebrowserUrl}/api/raw${filePath}?auth=${jwtToken}`;
   
       const response = await axios.get(fileUrl, { responseType: 'blob' });
       // For binary files, 'blob' is used. For text files, you might use 'text'.
