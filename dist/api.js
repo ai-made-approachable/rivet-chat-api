@@ -17,7 +17,7 @@ app.use((req, res, next) => {
         const authHeader = req.headers.authorization;
         // Do not check authentification on non internal domains
         console.log(host);
-        if (!host.includes('.internal')) {
+        if (host !== '::') {
             if (!authHeader || authHeader !== `Bearer ${apiKey}`) {
                 return res.status(403).json({ message: 'Forbidden - Invalid API Key' });
             }
