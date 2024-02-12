@@ -3,11 +3,13 @@ import { GraphManager } from './graphManager.js';
 import fs from 'fs';
 import path from 'path';
 import { authenticateAndGetJWT, listFiles, fetchFileContent } from './files.js';
+import morgan from 'morgan';
 const app = express();
 const port = process.env.PORT || 3100; // Default port or environment variable
 const environment = process.env.NODE_ENV;
 const apiKey = process.env.RIVET_CHAT_API_KEY;
 app.use(express.json());
+app.use(morgan('combined'));
 // Middleware for API Key validation in production
 app.use((req, res, next) => {
     if (environment === 'production') {
