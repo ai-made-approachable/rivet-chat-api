@@ -16,7 +16,8 @@ app.use((req, res, next) => {
     if (environment === 'production') {
         const authHeader = req.headers.authorization;
         // Do not check authentification on non internal domains
-        if (!host.endsWith('.internal')) {
+        console.log(host);
+        if (!host.includes('.internal')) {
             if (!authHeader || authHeader !== `Bearer ${apiKey}`) {
                 return res.status(403).json({ message: 'Forbidden - Invalid API Key' });
             }
