@@ -9,6 +9,7 @@ const app = express();
 const port = process.env.PORT || 3100; // Default port or environment variable
 const environment = process.env.NODE_ENV;
 const apiKey = process.env.RIVET_CHAT_API_KEY;
+const domain = process.env.FILEBROWSER_DOMAIN;
 
 app.use(express.json());
 app.use(morgan('combined'));
@@ -17,8 +18,11 @@ app.use(morgan('combined'));
 app.use((req, res, next) => {
     if (environment === 'production') {
         const authHeader = req.headers.authorization;
-        if (!authHeader || authHeader !== `Bearer ${apiKey}`) {
-            return res.status(403).json({ message: 'Forbidden - Invalid API Key' });
+        // Do not check authentification on non internal domains
+        if (!host.endsWith('.internal')) {
+            if (!authHeader || authHeader !== `Bearer ${apiKey}`) {
+                return res.status(403).json({ message: 'Forbidden - Invalid API Key' });
+            }
         }
     }
     next();
