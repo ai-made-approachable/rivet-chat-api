@@ -19,8 +19,8 @@ app.use((req, res, next) => {
     if (environment === 'production') {
         const authHeader = req.headers.authorization;
         // Do not check authentification on non internal domains
-        console.log(host);
-        if (host !== '::') {
+        console.log(req.hostname);
+        if (req.hostname !== '::') {
             if (!authHeader || authHeader !== `Bearer ${apiKey}`) {
                 return res.status(403).json({ message: 'Forbidden - Invalid API Key' });
             }
@@ -44,7 +44,7 @@ app.post('/v1/chat/completions', async (req, res) => {
 
     const processedMessages = messages.map(({ role: type, content: message }) => ({ type, message }));
 
-    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Transfer-Encoding', 'chunked');
 
     const commonData = {
