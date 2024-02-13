@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 });
 
 // Dynamic model loading for chat completions based on the model specified in the request body
-app.post('/v1/chat/completions', async (req, res) => {
+app.post('/chat/completions', async (req, res) => {
     const modelId = req.body.model;
     if (!modelId) {
         return res.status(400).json({ message: 'Model identifier is required' });
@@ -95,22 +95,8 @@ app.post('/v1/chat/completions', async (req, res) => {
         res.end()
     }
 
-    // Special case for summarizer.rivet-project
-    if (modelId === "summarizer.rivet-project") {
-        const directoryPath = path.resolve(process.cwd(), './rivet');
-        const modelFilePath = path.join(directoryPath, modelId === "summarizer.rivet-project" ? "summarizer.rivet-project" : modelId);
-
-        if (!fs.existsSync(modelFilePath)) {
-            return res.status(404).json({ message: 'Model not found' });
-        }
-
-        const graphManager = new GraphManager({ config: { file: modelFilePath } });
-        await processAndSendChunks(graphManager);
-        return;
-    }
-
     // Handling for non-production environment or when not the special case
-    if (environment !== 'production' && modelId !== "summarizer.rivet-project") {
+    if (environment !== 'production') {
         const directoryPath = path.resolve(process.cwd(), './rivet');
         const modelFilePath = path.join(directoryPath, modelId);
 
@@ -144,7 +130,7 @@ app.post('/v1/chat/completions', async (req, res) => {
 });
 
 
-app.get('/v1/models', async (req, res) => {
+app.get('/models', async (req, res) => {
     // For prod get the contents from the filebrowser application
     if (environment === 'production') {
         try {
