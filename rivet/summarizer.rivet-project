@@ -37,17 +37,6 @@ data:
             useUseTopPInput: false
             useUserInput: false
           visualData: 464.4742810831926/95.32331652281215/230/10//
-        '[KBbQ0CXWNk03s3NIdEWdH]:text "Text"':
-          data:
-            text: >-
-              Detect user language and write in the same language an extremely
-              concise title for this conversation, which you must accurately
-              detect.
-
-              Write in the detected language. Title in 5 Words or Less. No Punctuation or Quotation. Do not mention the language. All first letters of every word should be capitalized and write the title in User Language only.
-          outgoingConnections:
-            - output->"output" JrEGKEnx81GpBcHk-ZvjT/systemPrompt
-          visualData: 25.764113560095296/-40.213157996518675/330/9//
         '[vxlkl_qcLBjJZxhQkmxhp]:graphInput "Graph Input"':
           data:
             dataType: chat-message[]
@@ -55,7 +44,7 @@ data:
             useDefaultValueInput: false
           outgoingConnections:
             - data->"output" JrEGKEnx81GpBcHk-ZvjT/prompt
-          visualData: 25.764113560095364/150.01347290780527/330/11/var(--node-color-3)/var(--grey-darkish)
+          visualData: 25.764113560095364/153.01405512093376/330/12/var(--node-color-3)/var(--grey-darkish)
   metadata:
     description: ""
     id: 2fDILbggAl-Jou-GUXvUA
