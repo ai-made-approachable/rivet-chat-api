@@ -177,6 +177,7 @@ app.get('/v1/models', async (req, res) => {
                 created: new Date(file.modified).getTime() / 1000, // Convert to Unix timestamp if needed
                 owned_by: "user",
             }));
+            res.setHeader('Content-Type', 'application/json');
             res.json({ object: "list", data: models });
         }
         catch (error) {
@@ -202,6 +203,7 @@ app.get('/v1/models', async (req, res) => {
                     owned_by: "user",
                 };
             });
+            res.setHeader('Content-Type', 'application/json');
             res.json({ object: "list", data: models });
         });
     }
