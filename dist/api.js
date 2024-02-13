@@ -58,12 +58,27 @@ app.post('/v1/chat/completions', async (req, res) => {
             // Initialize GraphManager with the model content from Filebrowser
             // This step may require adjustments to GraphManager to accept file content directly
             const graphManager = new GraphManager({ modelContent: fileContent });
+            let previousChunk = null;
             for await (const chunk of graphManager.runGraph(processedMessages)) {
-                const chunkData = {
+                if (previousChunk !== null) {
+                    // This means we have a chunk to send that is not the last one
+                    const chunkData = {
+                        ...commonData,
+                        choices: [{ index: 0, delta: { content: previousChunk }, logprobs: null, finish_reason: null }],
+                    };
+                    res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
+                }
+                // Store the current chunk to be sent as the previous one in the next iteration
+                previousChunk = chunk;
+            }
+            // After the loop, handle the last chunk
+            if (previousChunk !== null) {
+                // This is the last chunk
+                const lastChunkData = {
                     ...commonData,
-                    choices: [{ index: 0, delta: { content: chunk }, logprobs: null, finish_reason: null }],
+                    choices: [{ index: 0, delta: { content: previousChunk }, logprobs: null, finish_reason: "stop" }],
                 };
-                res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
+                res.write(`data: ${JSON.stringify(lastChunkData)}\n\n`);
             }
             res.write('data: [DONE]\n\n');
         }
