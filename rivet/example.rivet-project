@@ -1,0 +1,61 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    7csOhbXu44Jps1V4znQpl:
+      metadata:
+        description: ""
+        id: 7csOhbXu44Jps1V4znQpl
+        name: "#main"
+      nodes:
+        '[ECtteSLdMxsPGFVFY6oM8]:text "Text"':
+          data:
+            text: You are ChatGPT, but running inside a Rivet Graph. Rivet is a visual
+              programming tool for interactions with LLMs. Let the user know
+              about that!
+          outgoingConnections:
+            - output->"output" t3d6sXbFk0i9EkAgvd37R/systemPrompt
+          visualData: 354.23413061499997/308.36726447681565/330/66//
+        '[NOaDQSTgVr8lJoGjPetSo]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: input
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"output" t3d6sXbFk0i9EkAgvd37R/prompt
+          visualData: 351.95598246174876/489.9382502904898/330/64/var(--node-color-3)/var(--grey-darkish)
+        '[t3d6sXbFk0i9EkAgvd37R]:chat "output"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            headers: []
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            parallelFunctionCalling: true
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          visualData: 835.1097899549993/313.8617381627201/230/65//
+  metadata:
+    description: Example to run via rivet-node
+    id: vHpwmvjUYbE-MQJ7H_sV_
+    mainGraphId: 7csOhbXu44Jps1V4znQpl
+    title: Example project
+  plugins: []

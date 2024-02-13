@@ -44,7 +44,7 @@ export class GraphManager {
                 projectContent = await fs.readFile(modelFilePath, 'utf8');
             }
             const project = loadProjectFromString(projectContent);
-            const graphInput = this.config.graphInputName;
+            const graphInput = "input";
             const datasetOptions = {
                 save: true,
                 // filePath should only be set if you're working with a file, adjust accordingly

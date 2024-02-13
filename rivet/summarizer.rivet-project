@@ -1,0 +1,64 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    B6rTOQuuG5PNZ8Vc_98qp:
+      metadata:
+        description: ""
+        id: B6rTOQuuG5PNZ8Vc_98qp
+        name: summarizer
+      nodes:
+        '[JrEGKEnx81GpBcHk-ZvjT]:chat "output"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            headers: []
+            maxTokens: 16
+            model: gpt-3.5-turbo
+            parallelFunctionCalling: true
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.2
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          visualData: 464.4742810831926/95.32331652281215/230/10//
+        '[KBbQ0CXWNk03s3NIdEWdH]:text "Text"':
+          data:
+            text: >-
+              Detect user language and write in the same language an extremely
+              concise title for this conversation, which you must accurately
+              detect.
+
+              Write in the detected language. Title in 5 Words or Less. No Punctuation or Quotation. Do not mention the language. All first letters of every word should be capitalized and write the title in User Language only.
+          outgoingConnections:
+            - output->"output" JrEGKEnx81GpBcHk-ZvjT/systemPrompt
+          visualData: 25.764113560095296/-40.213157996518675/330/9//
+        '[vxlkl_qcLBjJZxhQkmxhp]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: input
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"output" JrEGKEnx81GpBcHk-ZvjT/prompt
+          visualData: 25.764113560095364/150.01347290780527/330/11/var(--node-color-3)/var(--grey-darkish)
+  metadata:
+    description: ""
+    id: 2fDILbggAl-Jou-GUXvUA
+    mainGraphId: B6rTOQuuG5PNZ8Vc_98qp
+    title: summary
+  plugins: []

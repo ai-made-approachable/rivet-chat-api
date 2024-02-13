@@ -44,81 +44,78 @@ app.post('/v1/chat/completions', async (req, res) => {
         model: modelId,
         system_fingerprint: null,
     };
-    if (environment === 'production') {
-        let lastChunkData = null; // Declare lastChunkData outside the try block to ensure it's accessible in finally
-        try {
-            const token = await authenticateAndGetJWT();
-            if (!token) {
-                return res.status(401).json({ message: 'Failed to authenticate with Filebrowser' });
+    // Define a function to process and send chunks
+    async function processAndSendChunks(graphManager) {
+        let isFirstChunk = true;
+        let previousChunk = null;
+        for await (const chunk of graphManager.runGraph(processedMessages)) {
+            if (isFirstChunk) {
+                isFirstChunk = false;
+                // Include role only for the first chunk
+                previousChunk = { role: "assistant", content: chunk };
             }
-            const filePath = `/${modelId}`; // Adjust based on your Filebrowser structure
-            const fileContent = await fetchFileContent(filePath, token);
-            if (!fileContent) {
-                return res.status(404).json({ message: 'Model not found on Filebrowser' });
-            }
-            // Initialize GraphManager with the model content from Filebrowser
-            const graphManager = new GraphManager({ modelContent: fileContent });
-            let isFirstChunk = true;
-            for await (const chunk of graphManager.runGraph(processedMessages)) {
-                let delta;
-                if (isFirstChunk) {
-                    // For the first chunk, include the role as 'assistant'
-                    delta = { role: "assistant", content: chunk };
-                    isFirstChunk = false; // Ensure this block won't run again
+            else {
+                // Send the previous chunk now that we know it's not the last
+                if (previousChunk !== null) {
+                    const chunkData = {
+                        ...commonData,
+                        choices: [{ index: 0, delta: previousChunk, logprobs: null, finish_reason: null }],
+                    };
+                    res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
                 }
-                else {
-                    // For subsequent chunks, just include the content
-                    delta = { content: chunk };
-                }
-                const chunkData = {
-                    ...commonData,
-                    choices: [{ index: 0, delta: delta, logprobs: null, finish_reason: null }],
-                };
-                res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
-                // Prepare the last chunk to be sent in the finally block
-                lastChunkData = {
-                    ...commonData,
-                    choices: [{ index: 0, delta: { content: chunk }, logprobs: null, finish_reason: "stop" }],
-                };
+                previousChunk = { content: chunk }; // Update previousChunk to current chunk
             }
         }
-        catch (error) {
-            console.error('Error processing graph:', error);
-            res.status(500).json({ message: 'Internal server error' });
+        // Handle the last chunk
+        if (previousChunk !== null) {
+            const lastChunkData = {
+                ...commonData,
+                choices: [{ index: 0, delta: previousChunk, logprobs: null, finish_reason: "stop" }],
+            };
+            res.write(`data: ${JSON.stringify(lastChunkData)}\n\n`);
         }
-        finally {
-            // Ensure the last chunk and the completion message are sent
-            if (lastChunkData) {
-                res.write(`data: ${JSON.stringify(lastChunkData)}\n\n`);
-            }
-            res.write('data: [DONE]\n\n');
-            res.end();
-        }
+        res.write('data: [DONE]\n\n');
+        res.end();
     }
-    else {
+    // Special case for summarizer.rivet-project
+    if (modelId === "summarizer.rivet-project") {
+        const directoryPath = path.resolve(process.cwd(), './rivet');
+        const modelFilePath = path.join(directoryPath, modelId === "summarizer.rivet-project" ? "summarizer.rivet-project" : modelId);
+        if (!fs.existsSync(modelFilePath)) {
+            return res.status(404).json({ message: 'Model not found' });
+        }
+        const graphManager = new GraphManager({ config: { file: modelFilePath } });
+        await processAndSendChunks(graphManager);
+        return;
+    }
+    // Handling for non-production environment or when not the special case
+    if (environment !== 'production' && modelId !== "summarizer.rivet-project") {
         const directoryPath = path.resolve(process.cwd(), './rivet');
         const modelFilePath = path.join(directoryPath, modelId);
         if (!fs.existsSync(modelFilePath)) {
             return res.status(404).json({ message: 'Model not found' });
         }
         const graphManager = new GraphManager({ config: { file: modelFilePath } });
-        try {
-            for await (const chunk of graphManager.runGraph(processedMessages)) {
-                const chunkData = {
-                    ...commonData,
-                    choices: [{ index: 0, delta: { content: chunk }, logprobs: null, finish_reason: null }],
-                };
-                res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
-            }
-            res.write('data: [DONE]\n\n');
+        await processAndSendChunks(graphManager);
+        return;
+    }
+    // Handling for production environment (excluding summarizer.rivet-project)
+    try {
+        const token = await authenticateAndGetJWT();
+        if (!token) {
+            return res.status(401).json({ message: 'Failed to authenticate with Filebrowser' });
         }
-        catch (error) {
-            console.error('Error processing graph:', error);
-            res.status(500).json({ message: 'Internal server error' });
+        const filePath = `/${modelId}`; // Adjust based on your Filebrowser structure
+        const fileContent = await fetchFileContent(filePath, token);
+        if (!fileContent) {
+            return res.status(404).json({ message: 'Model not found on Filebrowser' });
         }
-        finally {
-            res.end();
-        }
+        const graphManager = new GraphManager({ modelContent: fileContent });
+        await processAndSendChunks(graphManager);
+    }
+    catch (error) {
+        console.error('Error processing graph:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 app.get('/v1/models', async (req, res) => {

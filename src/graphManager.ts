@@ -62,7 +62,7 @@ export class GraphManager {
             }
     
             const project = loadProjectFromString(projectContent);
-            const graphInput = this.config.graphInputName as string;
+            const graphInput = "input";
     
             const datasetOptions = {
                 save: true,
