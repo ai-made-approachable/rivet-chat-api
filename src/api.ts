@@ -16,6 +16,8 @@ app.use(morgan('combined'));
 
 // Middleware for API Key validation in production
 app.use((req, res, next) => {
+    console.log('Request Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Request Body:', JSON.stringify(req.body, null, 2));
     if (environment === 'production') {
         const authHeader = req.headers.authorization;
         // Do not check authentification on non internal domains
