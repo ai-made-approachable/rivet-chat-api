@@ -50,6 +50,7 @@ app.post('/v1/chat/completions', async (req, res) => {
     async function processAndSendChunks(graphManager) {
         let isFirstChunk = true;
         let previousChunk = null;
+        let accumulatedContent = "";
         for await (const chunk of graphManager.runGraph(processedMessages)) {
             if (isFirstChunk) {
                 isFirstChunk = false;
@@ -64,12 +65,14 @@ app.post('/v1/chat/completions', async (req, res) => {
                         choices: [{ index: 0, delta: previousChunk, logprobs: null, finish_reason: null }],
                     };
                     res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
+                    accumulatedContent += previousChunk.content;
                 }
                 previousChunk = { content: chunk }; // Update previousChunk to current chunk
             }
         }
         // Handle the last chunk
         if (previousChunk !== null) {
+            accumulatedContent += previousChunk.content;
             const lastChunkData = {
                 ...commonData,
                 choices: [{ index: 0, delta: previousChunk, logprobs: null, finish_reason: "stop" }],
@@ -77,6 +80,7 @@ app.post('/v1/chat/completions', async (req, res) => {
             res.write(`data: ${JSON.stringify(lastChunkData)}\n\n`);
         }
         res.write('data: [DONE]\n\n');
+        console.log('Final Output:', accumulatedContent);
         res.end();
     }
     // Special case for summarizer.rivet-project

@@ -16,8 +16,8 @@ app.use(morgan('combined'));
 
 // Middleware for API Key validation in production
 app.use((req, res, next) => {
-    console.log('Request Headers:', JSON.stringify(req.headers, null, 2));
-    console.log('Request Body:', JSON.stringify(req.body, null, 2));
+    //console.log('Request Headers:', JSON.stringify(req.headers, null, 2));
+    //console.log('Request Body:', JSON.stringify(req.body, null, 2));
     if (environment === 'production') {
         const authHeader = req.headers.authorization;
         // Do not check authentification on non internal domains
@@ -59,6 +59,7 @@ app.post('/v1/chat/completions', async (req, res) => {
     async function processAndSendChunks(graphManager) {
         let isFirstChunk = true;
         let previousChunk = null;
+        let accumulatedContent = "";
 
         for await (const chunk of graphManager.runGraph(processedMessages)) {
             if (isFirstChunk) {
@@ -73,6 +74,7 @@ app.post('/v1/chat/completions', async (req, res) => {
                         choices: [{ index: 0, delta: previousChunk, logprobs: null, finish_reason: null }],
                     };
                     res.write(`data: ${JSON.stringify(chunkData)}\n\n`);
+                    accumulatedContent += previousChunk.content;
                 }
                 previousChunk = { content: chunk }; // Update previousChunk to current chunk
             }
@@ -80,6 +82,7 @@ app.post('/v1/chat/completions', async (req, res) => {
 
         // Handle the last chunk
         if (previousChunk !== null) {
+            accumulatedContent += previousChunk.content;
             const lastChunkData = {
                 ...commonData,
                 choices: [{ index: 0, delta: previousChunk, logprobs: null, finish_reason: "stop" }],
@@ -88,6 +91,7 @@ app.post('/v1/chat/completions', async (req, res) => {
         }
 
         res.write('data: [DONE]\n\n');
+        console.log('Final Output:', accumulatedContent);
         res.end()
     }
 
