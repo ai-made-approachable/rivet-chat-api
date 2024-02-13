@@ -95,49 +95,17 @@ app.post('/v1/chat/completions', async (req, res) => {
         res.end()
     }
 
-    // Special case for summarizer.rivet-project, returning legacy completion format for LibreChat...
+    // Special case for summarizer.rivet-project
     if (modelId === "summarizer.rivet-project") {
         const directoryPath = path.resolve(process.cwd(), './rivet');
-        const modelFilePath = path.join(directoryPath, "summarizer.rivet-project");
-    
+        const modelFilePath = path.join(directoryPath, modelId === "summarizer.rivet-project" ? "summarizer.rivet-project" : modelId);
+
         if (!fs.existsSync(modelFilePath)) {
             return res.status(404).json({ message: 'Model not found' });
         }
-    
+
         const graphManager = new GraphManager({ config: { file: modelFilePath } });
-        try {
-            let fullContent = '';
-            for await (const chunk of graphManager.runGraph(processedMessages)) {
-                fullContent += chunk;
-            }
-            // Construct the response in the legacy format
-            const legacyResponse = {
-                id: "cmpl-" + Math.random().toString(36).substr(2, 9), // Example ID generation
-                object: "text_completion",
-                created: Math.floor(Date.now() / 1000),
-                model: modelId,
-                system_fingerprint: "fp_" + Math.random().toString(36).substr(2, 10), // Example fingerprint
-                choices: [
-                    {
-                        text: fullContent,
-                        index: 0,
-                        logprobs: null,
-                        finish_reason: "length" // You might need a way to determine the actual finish reason
-                    }
-                ],
-                usage: {
-                    prompt_tokens: 0, // Calculate as needed
-                    completion_tokens: 0, // Calculate as needed
-                    total_tokens: 0 // Calculate as needed
-                }
-            };
-            res.setHeader('Content-Type', 'application/json');
-            // Return the legacy format response
-            res.json(legacyResponse);
-        } catch (error) {
-            console.error('Error processing graph:', error);
-            res.status(500).json({ message: 'Internal server error' });
-        }
+        await processAndSendChunks(graphManager);
         return;
     }
 
