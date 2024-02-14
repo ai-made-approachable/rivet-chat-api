@@ -100,7 +100,7 @@ export class GraphManager {
             for await (const event of processor.events()) {
                 if (
                     event.type === 'partialOutput' &&
-                    event.node.title === "output"
+                    event.node.title.toLowerCase() === "output"
                 ) {
                     const content = (event.outputs as any).response.value;
     

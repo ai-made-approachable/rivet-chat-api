@@ -73,7 +73,7 @@ export class GraphManager {
             let lastContent = '';
             for await (const event of processor.events()) {
                 if (event.type === 'partialOutput' &&
-                    event.node.title === "output") {
+                    event.node.title.toLowerCase() === "output") {
                     const content = event.outputs.response.value;
                     if (content.startsWith(lastContent)) {
                         const delta = content.slice(lastContent.length);

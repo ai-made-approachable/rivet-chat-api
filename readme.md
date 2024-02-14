@@ -10,17 +10,12 @@ Features:
 - Beautiful Chat-UI (provided by Chatbot-UI)
 - Chatbot-UI features: Multiple chats with conversation history, Integrated RAG etc.
 
-Currently not supported (maybe added in the future):
-- System prompts and LLM settings (e.g. temperature) set in Chatbot-UI interface are currently not being send to the graph
-- Tools added in Chatbot-UI will not be passed
-
 ![Chat UI for Rivet!](/chat_ui.png "Chat UI for Rivet!")
 
-# Last updates 04. Feb 2024
-- Now supports parallel requesting. So multiple users can chat with the same rivet graph at the same time
-- Multiple rivet graphs/projects can be served on different ports
-- API Key was added for security
-- Better error handling, so failed Rivet graphs will not break the application
+# Last updates 14. Feb 2024
+- Fully revamped how most of the parts are working; you do not need to touch a configuration file anymore
+- You only need to drop files into /rivet folder to be able to work with them (but make sure to properly prepare the files; see "Use your own files")
+- Files are references now as models and no more via different ports
 
 # Project setup
 For simplicity all is explained for Visual Studio Code. You can of course run it in other IDEs.
@@ -47,8 +42,9 @@ Continue with the "Chat setup". The URLs displayed are the endpoints to connect 
 
 ## Use your own project files
 - Make sure your project file has an input of type "chat-message" and array checked (Type: chat-message[])
-- Open ```config/default.json```
-- Change the values accordingly to your graph (file, graphName, graphInput ...)
+- Rename all "Chat" nodes you want to have streaming output to "output"
+- Select a main graph in "Project" settings
+- Add your file into the /rivet folder and remember the filename
 
 ## Using plugins
 If you want to use plugins, you need to import and register them first in graphManager.ts
@@ -96,8 +92,9 @@ Note: Also see instructions on: https://github.com/mckaywrigley/chatbot-ui
 ## Configure the Chat-UI
 1. When you start "chatbot-ui" for the first time enter e-mail + password (don't worry, all stays locally on your pc)
 1. In the sidebar press on "Models" (Stars-Icon) and on "New Model"
-1. Enter any name. but use ```gpt-4-turbo-preview``` as ModelID (Note: when adding multiple graphs, you need to chose another model from this list for each one of them. Otherwise Chatbot-UI does not properly work: https://github.com/mckaywrigley/chatbot-ui/blob/3cfb3f3762ef3237800c92d6598c779ea4caf757/lib/chat-setting-limits.ts#L63)
-1. Enter ```http://localhost:3100/``` as Base URL (change port accordingly if you run multiple graphs according to default.json) 
-1. As API_Key set the value you defined in your config/default.json file
+1. Enter any name
+1. Add the name of your graph e.g. "example.rivet-project" as model
+1. Enter ```http://localhost:3100/``` as Base URL
+1. Enter anything as API key
 1. Open the model selection in the top-right corner and select your custom model
 1. Have fun chatting
