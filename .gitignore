@@ -1,7 +1,7 @@
 /.vscode/launch.json
 /node_modules/
-example.rivet-project
 /audio/*
 config.gypi
 /src/archive/
 /dist/archive/
+yarn.lock

@@ -1,13 +1,21 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-	  {
-		"label": "build",
-		"type": "shell",
-		"command": "npm run build",
-		"options": {
-		  "cwd": "${workspaceFolder}"
+		{
+			"label": "start-and-test",
+			"type": "shell",
+			"command": "npm run start-and-test",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "build",
+			"type": "shell",
+			"command": "npm run build",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
 		}
-	  }
 	]
-  }
+}

@@ -9,7 +9,7 @@ data:
       metadata:
         description: ""
         id: 7csOhbXu44Jps1V4znQpl
-        name: chat-history
+        name: "#main"
       nodes:
         '[ECtteSLdMxsPGFVFY6oM8]:text "Text"':
           data:
@@ -17,26 +17,17 @@ data:
               programming tool for interactions with LLMs. Let the user know
               about that!
           outgoingConnections:
-            - output->"Prompt" hWLNO4XDZO9XPXIDGVjga/input
-          visualData: 345.2716928515801/39.49413157421887/330/45//
+            - output->"output" t3d6sXbFk0i9EkAgvd37R/systemPrompt
+          visualData: 354.23413061499997/308.36726447681565/330/66//
         '[NOaDQSTgVr8lJoGjPetSo]:graphInput "Graph Input"':
           data:
             dataType: chat-message[]
             id: input
             useDefaultValueInput: false
           outgoingConnections:
-            - data->"Output (Chat)" t3d6sXbFk0i9EkAgvd37R/prompt
+            - data->"output" t3d6sXbFk0i9EkAgvd37R/prompt
           visualData: 351.95598246174876/489.9382502904898/330/64/var(--node-color-3)/var(--grey-darkish)
-        '[hWLNO4XDZO9XPXIDGVjga]:prompt "Prompt"':
-          data:
-            enableFunctionCall: false
-            promptText: "{{input}}"
-            type: system
-            useTypeInput: false
-          outgoingConnections:
-            - output->"Output (Chat)" t3d6sXbFk0i9EkAgvd37R/systemPrompt
-          visualData: 389.2797533784723/243.3127158681644/280/43//
-        '[t3d6sXbFk0i9EkAgvd37R]:chat "Output (Chat)"':
+        '[t3d6sXbFk0i9EkAgvd37R]:chat "output"':
           data:
             cache: false
             enableFunctionUse: false
@@ -61,9 +52,10 @@ data:
             useTopPInput: false
             useUseTopPInput: false
             useUserInput: false
-          visualData: 835.1097899549993/313.8617381627201/230/32//
+          visualData: 835.1097899549993/313.8617381627201/230/65//
   metadata:
     description: Example to run via rivet-node
     id: vHpwmvjUYbE-MQJ7H_sV_
+    mainGraphId: 7csOhbXu44Jps1V4znQpl
     title: Example project
   plugins: []

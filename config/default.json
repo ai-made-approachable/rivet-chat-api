@@ -1,8 +1,7 @@
 {
-    "api_key": "80f946e4-04ba-4687-8c9e-bd33337f0f90",
     "servers": [
       {
-        "file": "./example.rivet-project",
+        "file": "./rivet/example.rivet-project",
         "graphName": "chat-history",
         "graphInputName": "input",
         "streamingOutput": {
@@ -14,7 +13,7 @@
         "port": 3100
       },
       {
-        "file": "./example2.rivet-project",
+        "file": "./rivet/example2.rivet-project",
         "graphName": "other_graph",
         "graphInputName": "input",
         "streamingOutput": {
