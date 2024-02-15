@@ -12,7 +12,8 @@ Features:
 
 ![Chat UI for Rivet!](/chat_ui.png "Chat UI for Rivet!")
 
-# Last updates 14. Feb 2024
+# Last updates 15. Feb 2024
+- Added a simple way to deploy to the cloud!
 - Fully revamped how most of the parts are working; you do not need to touch a configuration file anymore
 - You only need to drop files into /rivet folder to be able to work with them (but make sure to properly prepare the files; see "Use your own files")
 - Files are references now as models and no more via different ports
