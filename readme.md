@@ -17,36 +17,48 @@ Features:
 - You only need to drop files into /rivet folder to be able to work with them (but make sure to properly prepare the files; see "Use your own files")
 - Files are references now as models and no more via different ports
 
-# Project setup
+# Cloud setup
+## Requirements
+- Free Github account (https://github.com/join)
+- Free Supabase account (https://https://supabase.com/)
+- Free railway account (https://https://railway.app/)
+
+## Installation
+Go to https://railway.app/template/XjMVyQ?referralCode=Bc2Iiw and click "Deploy Now"
+
+*Note: Instructions can be found on the lower part of the template page*
+
+# Local setup
+## Rivet-Chat-API
 For simplicity all is explained for Visual Studio Code. You can of course run it in other IDEs.
 
-## Software installation (prerequisites)
+### Software installation (prerequisites)
 1. Install **Visual Studio Code**: https://code.visualstudio.com/download
 1. Install **node.js + node package manager**: https://nodejs.org/en/download/ (in the install process, make sure you also install npm package manager!)
 1. Install **Github**: https://desktop.github.com/
 
-## Clone the repo
+### Clone the repo
 1. Open terminal or command line
 1. Enter ```git clone https://github.com/ai-made-approachable/rivet-chat-api.git```
 
-## Configure the project
+### Configure the project
 1. Open the folder in Visual Studio Code (File -> Open Folder)
 1. Open "Terminal -> New Terminal" and enter ```npm install```
 1. Go to /.vscode/ folder
 1. Rename "launch_sample.json" to "launch.json"
 1. Open "launch.json" and replace the value for OPEN_API_KEY with your OpenAI Key
 
-## Running the project
+### Running the project
 Just press "Run -> Start Debugging" in Visual Studio Code.
 Continue with the "Chat setup". The URLs displayed are the endpoints to connect the chat to rivet-chat-api.
 
-## Use your own project files
+### Use your own project files
 - Make sure your project file has an input of type "chat-message" and array checked (Type: chat-message[])
 - Rename all "Chat" nodes you want to have streaming output to "output"
 - Select a main graph in "Project" settings
 - Add your file into the /rivet folder and remember the filename
 
-## Using plugins
+### Using plugins
 If you want to use plugins, you need to import and register them first in graphManager.ts
 
 Example for mongoDB Plugin
@@ -57,13 +69,13 @@ Rivet.globalRivetNodeRegistry.registerPlugin(rivetMongoDbPlugin(Rivet));
 ```
 
 ---
-# Chat setup
+## Chat setup
 We are using "Chatbot-UI" as it is a very user friendly UI (similiar to ChatGPTs UI): https://github.com/mckaywrigley/chatbot-ui
 
-## Software installation (prerequisites)
+### Software installation (prerequisites)
 1. Install **Docker**: https://docs.docker.com/engine/install/
 
-## Install Chatbot-UI
+### Install Chatbot-UI
 Note: This installation is a bit long, but it is a one time thing!
 
 1. Open terminal (MacOs) or command line (Windows)
@@ -83,13 +95,13 @@ Note: This installation is a bit long, but it is a one time thing!
 
 Note: Also see instructions on: https://github.com/mckaywrigley/chatbot-ui
 
-## Starting the Chat-UI
+### Starting the Chat-UI
 1. Make sure Docker is running
 1. Navigate to your "chatbot-ui" folder
 1. Enter ```npm run chat```
 1. Navigate to the URL shown to you, usually: http://localhost:3000
 
-## Configure the Chat-UI
+### Configure the Chat-UI
 1. When you start "chatbot-ui" for the first time enter e-mail + password (don't worry, all stays locally on your pc)
 1. In the sidebar press on "Models" (Stars-Icon) and on "New Model"
 1. Enter any name
