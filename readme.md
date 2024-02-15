@@ -24,7 +24,9 @@ Features:
 - Free railway account (https://https://railway.app/)
 
 ## Installation
-Go to https://railway.app/template/XjMVyQ?referralCode=Bc2Iiw and click "Deploy Now"
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/XjMVyQ?referralCode=Bc2Iiw)
+
+Click the button above or go to https://railway.app/template/XjMVyQ?referralCode=Bc2Iiw and click "Deploy Now"
 
 *Note: Instructions can be found on the lower part of the template page*
 
