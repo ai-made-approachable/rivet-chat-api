@@ -18,7 +18,7 @@ Features:
 - You only need to drop files into /rivet folder to be able to work with them (but make sure to properly prepare the files; see "Use your own files")
 - Files are references now as models and no more via different ports
 
-# Cloud setup
+# 1. Cloud setup
 ## Requirements
 - Free Github account (https://github.com/join)
 - Free Supabase account (https://https://supabase.com/)
@@ -29,9 +29,13 @@ Features:
 
 Click the button above or go to https://railway.app/template/XjMVyQ?referralCode=Bc2Iiw and click "Deploy Now"
 
-*Note: Instructions can be found on the lower part of the template page*
+Watch my youtube video explaining the process:
 
-# Local setup
+[![Watch the video](https://img.youtube.com/vi/WY2t1wFg50M/default.jpg)](https://youtu.be/WY2t1wFg50M)
+
+*Note: Written instructions can be found on the lower part of the template page*
+
+# 2. Local setup
 ## Rivet-Chat-API
 For simplicity all is explained for Visual Studio Code. You can of course run it in other IDEs.
 
