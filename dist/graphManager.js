@@ -1,6 +1,8 @@
-import { startDebuggerServer, loadProjectFromString, createProcessor, NodeDatasetProvider } from '@ironclad/rivet-node';
+import * as Rivet from '@ironclad/rivet-node';
 import fs from 'fs/promises';
 import path from 'path';
+import RivetPluginChroma from "rivet-plugin-chromadb";
+Rivet.globalRivetNodeRegistry.registerPlugin(RivetPluginChroma(Rivet));
 class DebuggerServer {
     constructor() {
         this.debuggerServer = null;
@@ -13,7 +15,7 @@ class DebuggerServer {
     }
     startDebuggerServerIfNeeded() {
         if (!this.debuggerServer) {
-            this.debuggerServer = startDebuggerServer({});
+            this.debuggerServer = Rivet.startDebuggerServer({});
             console.log('Debugger server started');
         }
         return this.debuggerServer;
@@ -43,14 +45,14 @@ export class GraphManager {
                 console.log('runGraph called with model file:', modelFilePath);
                 projectContent = await fs.readFile(modelFilePath, 'utf8');
             }
-            const project = loadProjectFromString(projectContent);
+            const project = Rivet.loadProjectFromString(projectContent);
             const graphInput = "input";
             const datasetOptions = {
                 save: true,
                 // filePath should only be set if you're working with a file, adjust accordingly
                 filePath: this.modelContent ? undefined : path.resolve(process.cwd(), './rivet', this.config.file),
             };
-            const datasetProvider = this.modelContent ? undefined : await NodeDatasetProvider.fromProjectFile(datasetOptions.filePath, datasetOptions);
+            const datasetProvider = this.modelContent ? undefined : await Rivet.NodeDatasetProvider.fromProjectFile(datasetOptions.filePath, datasetOptions);
             const options = {
                 graph: this.config.graphName,
                 inputs: {
@@ -67,7 +69,7 @@ export class GraphManager {
                 datasetProvider: datasetProvider,
             };
             console.log('Creating processor');
-            const { processor, run } = createProcessor(project, options);
+            const { processor, run } = Rivet.createProcessor(project, options);
             const runPromise = run();
             console.log('Starting to process events');
             let lastContent = '';

@@ -15,7 +15,8 @@
             ],
             "env": {
                 "OPENAI_API_KEY": "ENTER YOUR KEY",
-                "RIVET_CHAT_API_KEY": "80f946e4-04ba-4687-8c9e-bd33337f0f90"
+                "RIVET_CHAT_API_KEY": "80f946e4-04ba-4687-8c9e-bd33337f0f90",
+                "CHROMA_DATABASE_URI": "http://localhost:8000"
             }
         }
     ]

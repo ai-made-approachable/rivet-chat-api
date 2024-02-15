@@ -1,0 +1,96 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    2Nn0y2F5njlb-I0hFwiOa:
+      metadata:
+        description: ""
+        id: 2Nn0y2F5njlb-I0hFwiOa
+        name: Untitled Graph
+      nodes:
+        '[3SpKGRUueaVvkrc-3EZ4Y]:text "Text"':
+          data:
+            text: "{{input}}"
+          outgoingConnections:
+            - output->"Graph Output" 4vtZk5rEWlmJ2AmMQq5l9/value
+          visualData: 1526.2759741038058/621.2755603436227/330/52//
+        '[4vtZk5rEWlmJ2AmMQq5l9]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1931.8109948446327/605.1148616442481/330/54//
+        '[AoZzqPeWDXMY6VoGS4KsK]:getEmbedding "Get Embedding"':
+          data:
+            integration: openai
+            useIntegrationInput: false
+          outgoingConnections:
+            - embedding->"If" c2VcMyUiFOTgaY-f69TD1/value
+          visualData: 577.8215361976005/627.7412768587956/280/75//
+        '[RjBJ3uWr_O4JrMyfFnZ_X]:getEmbedding "Get Embedding"':
+          data:
+            integration: openai
+            useIntegrationInput: false
+          outgoingConnections:
+            - embedding->"Chroma Add" zSLgo3RPOh9bqndjylSWY/embedding
+          visualData: 837.8195710221827/205.3863905935351/280/81//
+        '[WhC0BYfR4o1Ios1TyItka]:text "Text"':
+          data:
+            text: Hello I am a text
+          outgoingConnections:
+            - output->"Chroma Add" zSLgo3RPOh9bqndjylSWY/document
+            - output->"Get Embedding" AoZzqPeWDXMY6VoGS4KsK/input
+            - output->"Get Embedding" RjBJ3uWr_O4JrMyfFnZ_X/input
+          visualData: 476.77426502123427/405.2102077512927/330/82//
+        '[Wx86YdD0SBCBbrNog3p1a]:chromaQuery "Chroma Query"':
+          data:
+            collectionName: chroma_db_test
+            createCollectionIfNotExists: true
+            nResults: 10
+            useCollectionNameInput: false
+            useWhereDocumentInput: false
+            useWhereInput: false
+            where: ""
+            whereDocument: ""
+          outgoingConnections:
+            - items->"Text" 3SpKGRUueaVvkrc-3EZ4Y/input
+          visualData: 1210.1029844110212/598.4107355482322/230/79//
+        '[c2VcMyUiFOTgaY-f69TD1]:if "If"':
+          data:
+            unconnectedControlFlowExcluded: true
+          outgoingConnections:
+            - output->"Chroma Query" Wx86YdD0SBCBbrNog3p1a/embedding
+          visualData: 961.5740941482941/624.3351890663338/155/78//
+        '[rDpvcr3Pt3I6zIq3y6iZG]:randomNumber "RNG"':
+          data:
+            integers: false
+            max: 10000
+            maxInclusive: false
+            min: 0
+          outgoingConnections:
+            - value->"Chroma Add" zSLgo3RPOh9bqndjylSWY/id
+          visualData: 1288.5585222246248/139.53535993927406/180/null//
+        '[zSLgo3RPOh9bqndjylSWY]:chromaAdd "Chroma Add"':
+          data:
+            collectionName: chroma_db_test
+            createCollectionIfNotExists: true
+            id: ""
+            metadata: []
+            upsert: true
+            useCollectionNameInput: false
+            useIdInput: true
+          outgoingConnections:
+            - id->"If" c2VcMyUiFOTgaY-f69TD1/if
+          visualData: 1206.812415205542/383.6383183990348/230/80//
+  metadata:
+    description: ""
+    id: aROj7rtFpUACcDdHK6zuD
+    mainGraphId: 2Nn0y2F5njlb-I0hFwiOa
+    title: Untitled Project
+  plugins:
+    - id: rivet-plugin-chromadb@latest
+      package: rivet-plugin-chromadb
+      tag: latest
+      type: package
