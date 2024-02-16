@@ -73,6 +73,12 @@ export class GraphManager {
                         databaseUri: process.env.CHROMA_DATABASE_URI,
                     },
                 },
+                context: {
+                    ...Object.entries(process.env).reduce((acc, [key, value]) => {
+                        acc[key] = value;
+                        return acc;
+                    }, {}),
+                },
             };
             console.log('Creating processor');
             const { processor, run } = Rivet.createProcessor(project, options);

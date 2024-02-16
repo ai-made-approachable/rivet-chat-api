@@ -80,7 +80,7 @@ app.post('/chat/completions', async (req, res) => {
             res.write(`data: ${JSON.stringify(lastChunkData)}\n\n`);
         }
         res.write('data: [DONE]\n\n');
-        console.log('Final Output:', accumulatedContent);
+        //console.log('Final Output:', accumulatedContent);
         res.end();
     }
     // Handling for non-production environment or when not the special case

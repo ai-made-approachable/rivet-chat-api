@@ -91,7 +91,7 @@ app.post('/chat/completions', async (req, res) => {
         }
 
         res.write('data: [DONE]\n\n');
-        console.log('Final Output:', accumulatedContent);
+        //console.log('Final Output:', accumulatedContent);
         res.end()
     }
 

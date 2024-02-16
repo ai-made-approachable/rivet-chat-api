@@ -29,6 +29,12 @@ data:
           outgoingConnections:
             - embedding->"If" c2VcMyUiFOTgaY-f69TD1/value
           visualData: 577.8215361976005/627.7412768587956/280/75//
+        '[R-LcAhb7PQwc7Q1aCuKhA]:if "If"':
+          data:
+            unconnectedControlFlowExcluded: true
+          outgoingConnections:
+            - output->"Chroma Add" zSLgo3RPOh9bqndjylSWY/document
+          visualData: 854/413/155/92//
         '[RjBJ3uWr_O4JrMyfFnZ_X]:getEmbedding "Get Embedding"':
           data:
             integration: openai
@@ -36,14 +42,22 @@ data:
           outgoingConnections:
             - embedding->"Chroma Add" zSLgo3RPOh9bqndjylSWY/embedding
           visualData: 837.8195710221827/205.3863905935351/280/81//
+        '[UZVTy34ZriuOlZsr1af2z]:chromaCreateCollection "Create Collection"':
+          data:
+            collectionName: chroma_db_test
+            ignoreIfExists: true
+            metadata: []
+          outgoingConnections:
+            - collectionName->"If" R-LcAhb7PQwc7Q1aCuKhA/if
+          visualData: -86/370/280/89//
         '[WhC0BYfR4o1Ios1TyItka]:text "Text"':
           data:
             text: Hello I am a text
           outgoingConnections:
-            - output->"Chroma Add" zSLgo3RPOh9bqndjylSWY/document
             - output->"Get Embedding" AoZzqPeWDXMY6VoGS4KsK/input
             - output->"Get Embedding" RjBJ3uWr_O4JrMyfFnZ_X/input
-          visualData: 476.77426502123427/405.2102077512927/330/82//
+            - output->"If" R-LcAhb7PQwc7Q1aCuKhA/value
+          visualData: 374.77426502123427/367.2102077512927/330/90//
         '[Wx86YdD0SBCBbrNog3p1a]:chromaQuery "Chroma Query"':
           data:
             collectionName: chroma_db_test
@@ -83,7 +97,7 @@ data:
             useIdInput: true
           outgoingConnections:
             - id->"If" c2VcMyUiFOTgaY-f69TD1/if
-          visualData: 1206.812415205542/383.6383183990348/230/80//
+          visualData: 1206.812415205542/383.6383183990348/230/83//
   metadata:
     description: ""
     id: aROj7rtFpUACcDdHK6zuD

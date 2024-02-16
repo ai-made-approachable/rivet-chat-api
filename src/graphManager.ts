@@ -66,9 +66,9 @@ export class GraphManager {
                 // filePath should only be set if you're working with a file, adjust accordingly
                 filePath: this.modelContent ? undefined : path.resolve(process.cwd(), './rivet', this.config.file),
             };
-    
+
             const datasetProvider = this.modelContent ? undefined : await Rivet.NodeDatasetProvider.fromProjectFile(datasetOptions.filePath, datasetOptions);
-    
+
             const options: Rivet.NodeRunGraphOptions = {
                 graph: this.config.graphName,
                 inputs: {
@@ -87,9 +87,15 @@ export class GraphManager {
                 datasetProvider: datasetProvider,
                 pluginSettings: {
                     chroma: {
-                      databaseUri: process.env.CHROMA_DATABASE_URI,
+                        databaseUri: process.env.CHROMA_DATABASE_URI,
                     },
-                  },
+                },
+                context: {
+                    ...Object.entries(process.env).reduce((acc, [key, value]) => {
+                        acc[key] = value;
+                        return acc;
+                    }, {}),
+                },
             };
     
             console.log('Creating processor');
