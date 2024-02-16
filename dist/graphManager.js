@@ -1,6 +1,7 @@
 import * as Rivet from '@ironclad/rivet-node';
 import fs from 'fs/promises';
 import path from 'path';
+// Import and  register plugins
 import RivetPluginChroma from "rivet-plugin-chromadb";
 Rivet.globalRivetNodeRegistry.registerPlugin(RivetPluginChroma(Rivet));
 class DebuggerServer {
@@ -67,6 +68,11 @@ export class GraphManager {
                 openAiKey: process.env.OPENAI_API_KEY,
                 remoteDebugger: DebuggerServer.getInstance().getDebuggerServer(),
                 datasetProvider: datasetProvider,
+                pluginSettings: {
+                    chroma: {
+                        databaseUri: process.env.CHROMA_DATABASE_URI,
+                    },
+                },
             };
             console.log('Creating processor');
             const { processor, run } = Rivet.createProcessor(project, options);
