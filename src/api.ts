@@ -4,24 +4,12 @@ import fs from 'fs';
 import path from 'path';
 import { authenticateAndGetJWT, listFiles, fetchFileContent } from  './files.js';
 import morgan from 'morgan';
-import axios from 'axios';
 
 const app = express();
 const port = process.env.PORT || 3100; // Default port or environment variable
 const environment = process.env.NODE_ENV;
 const apiKey = process.env.RIVET_CHAT_API_KEY;
 const domain = process.env.FILEBROWSER_DOMAIN;
-
-app.get('/test-connection', async (req, res) => {
-    try {
-        const response = await axios.get(`${process.env.CHROMA_DATABASE_URI}/docs`);
-        console.log('Connection Test Response:', response.data);
-        res.json({ message: 'Connection successful', data: response.data });
-    } catch (error) {
-        console.error('Connection Test Error:', error);
-        res.status(500).json({ message: 'Connection failed', error: error.message });
-    }
-});
 
 app.use(express.json());
 app.use(morgan('combined'));
@@ -31,6 +19,10 @@ app.use((req, res, next) => {
     //console.log('Request Headers:', JSON.stringify(req.headers, null, 2));
     //console.log('Request Body:', JSON.stringify(req.body, null, 2));
     if (environment === 'production') {
+        // Remove authentification from main path to make the debuggerSever accesible
+        if (req.path === '/') { // Assuming debugger access might be on '/' or '/index.html'
+            return next(); // Bypass security checks for the debugger
+        }    
         const authHeader = req.headers.authorization;
         // Do not check authentification on non internal domains
         if (!req.hostname.endsWith('.internal')) {
