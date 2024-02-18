@@ -94,6 +94,7 @@ const pluginConfigurations = [
     },
     {
         envVar: 'MONGODB_PLUGIN',
+        importPath: 'rivet-plugin-mongodb',
         isBuiltIn: false, 
         registerFunction: (plugin, Rivet) => Rivet.globalRivetNodeRegistry.registerPlugin(plugin(Rivet)),
         settings: {
