@@ -12,11 +12,8 @@ Features:
 
 ![Chat UI for Rivet!](/chat_ui.png "Chat UI for Rivet!")
 
-# Last updates 15. Feb 2024
-- Added a simple way to deploy to the cloud!
-- Fully revamped how most of the parts are working; you do not need to touch a configuration file anymore
-- You only need to drop files into /rivet folder to be able to work with them (but make sure to properly prepare the files; see "Use your own files")
-- Files are references now as models and no more via different ports
+# Last updates 19. Feb 2024
+- Added plugin support as well as access to environment variables (see #3 Additional features)
 
 # 1. Cloud setup
 ## Requirements
@@ -117,3 +114,28 @@ Note: Also see instructions on: https://github.com/mckaywrigley/chatbot-ui
 1. Enter anything as API key
 1. Open the model selection in the top-right corner and select your custom model
 1. Have fun chatting
+
+# 3 Additional features
+
+## 3.1 Accessing environment variables
+All environment variables are automatically available via the context node.
+
+## 3.2 Using plugins
+When you boot up the application, it will tell which plugins are supported and what environment variables need to set to make them work.
+As this might change often, this is easier than trying to keep this readme up-to-date.
+
+Example:
+
+```
+Available Plugins and Required Environment Variables:
+-----------------------------------------------------
+Plugin: chroma
+  Activate with env var: USE_CHROMADB_PLUGIN (set to 'true' to enable)
+  Required env var for databaseUri: CHROMA_DATABASE_URI
+-----------------------------------------------------
+```
+
+Note: I did not test every plugin if it works. Please contact me if there are issues.
+
+## 3.3 Additional debugging
+You can send data to an "raise event" node with id "debugger" to log the data to the console. This is useful if you run the graphs in the cloud.

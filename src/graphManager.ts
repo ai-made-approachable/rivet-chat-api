@@ -1,10 +1,9 @@
 import * as Rivet from '@ironclad/rivet-node';
 import fs from 'fs/promises';
 import path from 'path';
+import { setupPlugins, logAvailablePluginsInfo } from './pluginConfiguration.js';
 
-// Import and  register plugins
-import RivetPluginChroma from "rivet-plugin-chromadb";
-Rivet.globalRivetNodeRegistry.registerPlugin(RivetPluginChroma(Rivet));
+logAvailablePluginsInfo();
 
 class DebuggerServer {
     private static instance: DebuggerServer | null = null;
@@ -48,6 +47,9 @@ export class GraphManager {
         DebuggerServer.getInstance().startDebuggerServerIfNeeded();
     
         try {
+            // Dynamically setup plugins and retrieve their settings
+            const pluginSettings = await setupPlugins(Rivet);
+
             if (this.modelContent) {
                 // Use direct model content if provided
                 projectContent = this.modelContent;
@@ -85,11 +87,7 @@ export class GraphManager {
                 openAiKey: process.env.OPENAI_API_KEY,
                 remoteDebugger: DebuggerServer.getInstance().getDebuggerServer(),
                 datasetProvider: datasetProvider,
-                pluginSettings: {
-                    chroma: {
-                        databaseUri: process.env.CHROMA_DATABASE_URI,
-                    },
-                },
+                pluginSettings,
                 context: {
                     ...Object.entries(process.env).reduce((acc, [key, value]) => {
                         acc[key] = value;
