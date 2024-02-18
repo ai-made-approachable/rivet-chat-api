@@ -1,13 +1,10 @@
-import {
-    startDebuggerServer,
-    loadProjectFromString,
-    createProcessor,
-    NodeRunGraphOptions,
-    ChatMessage,
-    NodeDatasetProvider
-} from '@ironclad/rivet-node';
+import * as Rivet from '@ironclad/rivet-node';
 import fs from 'fs/promises';
 import path from 'path';
+
+// Import and  register plugins
+import RivetPluginChroma from "rivet-plugin-chromadb";
+Rivet.globalRivetNodeRegistry.registerPlugin(RivetPluginChroma(Rivet));
 
 class DebuggerServer {
     private static instance: DebuggerServer | null = null;
@@ -24,7 +21,7 @@ class DebuggerServer {
 
     public startDebuggerServerIfNeeded() {
         if (!this.debuggerServer) {
-            this.debuggerServer = startDebuggerServer({});
+            this.debuggerServer = Rivet.startDebuggerServer({});
             console.log('Debugger server started');
         }
         return this.debuggerServer;
@@ -61,7 +58,7 @@ export class GraphManager {
                 projectContent = await fs.readFile(modelFilePath, 'utf8');
             }
     
-            const project = loadProjectFromString(projectContent);
+            const project = Rivet.loadProjectFromString(projectContent);
             const graphInput = "input";
     
             const datasetOptions = {
@@ -69,10 +66,10 @@ export class GraphManager {
                 // filePath should only be set if you're working with a file, adjust accordingly
                 filePath: this.modelContent ? undefined : path.resolve(process.cwd(), './rivet', this.config.file),
             };
-    
-            const datasetProvider = this.modelContent ? undefined : await NodeDatasetProvider.fromProjectFile(datasetOptions.filePath, datasetOptions);
-    
-            const options: NodeRunGraphOptions = {
+
+            const datasetProvider = this.modelContent ? undefined : await Rivet.NodeDatasetProvider.fromProjectFile(datasetOptions.filePath, datasetOptions);
+
+            const options: Rivet.NodeRunGraphOptions = {
                 graph: this.config.graphName,
                 inputs: {
                     [graphInput]: {
@@ -81,17 +78,28 @@ export class GraphManager {
                             (message) => ({
                                 type: message.type,
                                 message: message.message,
-                            } as ChatMessage)
+                            } as Rivet.ChatMessage)
                         ),
                     },
                 },
                 openAiKey: process.env.OPENAI_API_KEY,
                 remoteDebugger: DebuggerServer.getInstance().getDebuggerServer(),
                 datasetProvider: datasetProvider,
+                pluginSettings: {
+                    chroma: {
+                        databaseUri: process.env.CHROMA_DATABASE_URI,
+                    },
+                },
+                context: {
+                    ...Object.entries(process.env).reduce((acc, [key, value]) => {
+                        acc[key] = value;
+                        return acc;
+                    }, {}),
+                },
             };
     
             console.log('Creating processor');
-            const { processor, run } = createProcessor(project, options);
+            const { processor, run } = Rivet.createProcessor(project, options);
             const runPromise = run();
             console.log('Starting to process events');
     
