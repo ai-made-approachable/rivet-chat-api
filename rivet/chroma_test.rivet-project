@@ -29,6 +29,11 @@ data:
           outgoingConnections:
             - embedding->"If" c2VcMyUiFOTgaY-f69TD1/value
           visualData: 577.8215361976005/627.7412768587956/280/75//
+        '[NVFCzp4rLxvYbl6wDJRij]:raiseEvent "Raise Event"':
+          data:
+            eventName: debugger
+            useEventNameInput: false
+          visualData: 1522.600807762907/792.0050314654073/180/97//
         '[R-LcAhb7PQwc7Q1aCuKhA]:if "If"':
           data:
             unconnectedControlFlowExcluded: true
@@ -69,6 +74,7 @@ data:
             where: ""
             whereDocument: ""
           outgoingConnections:
+            - items->"Raise Event" NVFCzp4rLxvYbl6wDJRij/data
             - items->"Text" 3SpKGRUueaVvkrc-3EZ4Y/input
           visualData: 1210.1029844110212/598.4107355482322/230/79//
         '[c2VcMyUiFOTgaY-f69TD1]:if "If"':
@@ -86,6 +92,11 @@ data:
           outgoingConnections:
             - value->"Chroma Add" zSLgo3RPOh9bqndjylSWY/id
           visualData: 1288.5585222246248/139.53535993927406/180/null//
+        '[vWs0CjqFhLeYsXcng4FNG]:raiseEvent "Raise Event"':
+          data:
+            eventName: debugger
+            useEventNameInput: false
+          visualData: 1561.785194372349/367.09933916927315/180/95//
         '[zSLgo3RPOh9bqndjylSWY]:chromaAdd "Chroma Add"':
           data:
             collectionName: chroma_db_test
@@ -97,6 +108,7 @@ data:
             useIdInput: true
           outgoingConnections:
             - id->"If" c2VcMyUiFOTgaY-f69TD1/if
+            - id->"Raise Event" vWs0CjqFhLeYsXcng4FNG/data
           visualData: 1206.812415205542/383.6383183990348/230/83//
   metadata:
     description: ""

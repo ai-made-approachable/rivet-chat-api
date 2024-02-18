@@ -21,7 +21,13 @@ class DebuggerServer {
 
     public startDebuggerServerIfNeeded() {
         if (!this.debuggerServer) {
-            this.debuggerServer = Rivet.startDebuggerServer({});
+            const serverOptions: { port?: number, host?: string } = {};
+            if (process.env.NODE_ENV === 'production') {
+                serverOptions.port = 3100;
+                serverOptions.host = '::';
+            }
+    
+            this.debuggerServer = Rivet.startDebuggerServer(serverOptions);
             console.log('Debugger server started');
         }
         return this.debuggerServer;
@@ -96,6 +102,12 @@ export class GraphManager {
                         return acc;
                     }, {}),
                 },
+                onUserEvent: {
+                    debugger: (data: Rivet.DataValue): Promise<void> => {
+                        console.log(`Debugging data: ${JSON.stringify(data)}`);
+                        return Promise.resolve();
+                    }
+                }
             };
     
             console.log('Creating processor');
