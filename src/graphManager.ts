@@ -23,7 +23,6 @@ class DebuggerServer {
         if (!this.debuggerServer) {
             const serverOptions: { port?: number, host?: string } = {};
             if (process.env.NODE_ENV === 'production') {
-                serverOptions.port = 3100;
                 serverOptions.host = '::';
             }
     
