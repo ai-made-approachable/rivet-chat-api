@@ -16,11 +16,7 @@ class DebuggerServer {
     }
     startDebuggerServerIfNeeded() {
         if (!this.debuggerServer) {
-            const serverOptions = {};
-            if (process.env.NODE_ENV === 'production') {
-                serverOptions.host = '::';
-            }
-            this.debuggerServer = Rivet.startDebuggerServer(serverOptions);
+            this.debuggerServer = Rivet.startDebuggerServer();
             console.log('Debugger server started');
         }
         return this.debuggerServer;
@@ -84,6 +80,7 @@ export class GraphManager {
                     }, {}),
                 },
                 onUserEvent: {
+                    // Add "event" node and with id "debugger" to log data from Rivet to the server logs
                     debugger: (data) => {
                         console.log(`Debugging data: ${JSON.stringify(data)}`);
                         return Promise.resolve();

@@ -16,10 +16,6 @@ app.use((req, res, next) => {
     //console.log('Request Headers:', JSON.stringify(req.headers, null, 2));
     //console.log('Request Body:', JSON.stringify(req.body, null, 2));
     if (environment === 'production') {
-        // Remove authentification from main path to make the debuggerSever accesible
-        if (req.path === '/') { // Assuming debugger access might be on '/' or '/index.html'
-            return next(); // Bypass security checks for the debugger
-        }
         const authHeader = req.headers.authorization;
         // Do not check authentification on non internal domains
         if (!req.hostname.endsWith('.internal')) {
