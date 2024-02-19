@@ -42,7 +42,7 @@ export async function fetchFileContent(filePath, jwtToken) {
         // For binary files, 'blob' is used. For text files, you might use 'text'.
         // Assuming you want to process the file content further or send it in a response:
         // Note: Depending on your use case, you might handle the response differently.
-        console.log('File downloaded successfully');
+        console.log(`File ${filePath} downloaded successfully`);
         return response.data;
     }
     catch (error) {

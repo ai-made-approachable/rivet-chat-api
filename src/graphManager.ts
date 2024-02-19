@@ -21,7 +21,7 @@ class DebuggerServer {
 
     public startDebuggerServerIfNeeded() {
         if (!this.debuggerServer) {
-            this.debuggerServer = Rivet.startDebuggerServer({});
+            this.debuggerServer = Rivet.startDebuggerServer();
             console.log('Debugger server started');
         }
         return this.debuggerServer;
@@ -96,6 +96,13 @@ export class GraphManager {
                         return acc;
                     }, {}),
                 },
+                onUserEvent: {
+                    // Add "event" node and with id "debugger" to log data from Rivet to the server logs
+                    debugger: (data: Rivet.DataValue): Promise<void> => {
+                        console.log(`Debugging data: ${JSON.stringify(data)}`);
+                        return Promise.resolve();
+                    }
+                }
             };
     
             console.log('Creating processor');
