@@ -11,6 +11,10 @@ const apiKey = process.env.RIVET_CHAT_API_KEY;
 const domain = process.env.FILEBROWSER_DOMAIN;
 app.use(express.json());
 app.use(morgan('combined'));
+app.use((req, res, next) => {
+    console.log(`Received ${req.method} request for ${req.url}`);
+    next();
+});
 // Middleware for API Key validation in production
 app.use((req, res, next) => {
     //console.log('Request Headers:', JSON.stringify(req.headers, null, 2));
@@ -167,5 +171,6 @@ app.get('/models', async (req, res) => {
 const host = environment === 'production' ? '::' : 'localhost';
 app.listen(Number(port), host, () => {
     console.log(`Server running at http://${host}:${port}/`);
+    console.log("-----------------------------------------------------");
 });
 //# sourceMappingURL=api.js.map

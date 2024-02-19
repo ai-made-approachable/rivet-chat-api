@@ -107,31 +107,37 @@ const pluginConfigurations = [
     }, 
 ];
 
+const registeredPlugins = {};
+
 export async function setupPlugins(Rivet) {
     let pluginSettings = {};
 
-    // Log at the beginning to indicate the start of the plugin registration process
     console.log("Starting plugin registration...");
 
     for (const config of pluginConfigurations) {
         if (process.env[config.envVar] === 'true') {
+            // Skip registration if the plugin has already been registered
+            if (registeredPlugins[config.settings.settingsKey]) {
+                console.log(`${config.settings.settingsKey} plugin already registered.`);
+            }
+
             let plugin = null;
             if (!config.isBuiltIn) {
-                // Dynamically import the plugin if it's not built-in
                 const module = await import(config.importPath);
                 plugin = module.default ? module.default : module;
             }
 
-            // Register the plugin
             try {
-                config.registerFunction(plugin, Rivet);
-                
-                // Log successful registration
-                console.log(`Successfully registered ${config.settings.settingsKey} plugin.`);
+                // Perform registration if the plugin hasn't been registered yet
+                if (!registeredPlugins[config.settings.settingsKey]) {
+                    config.registerFunction(plugin, Rivet);
+                    console.log(`Successfully registered ${config.settings.settingsKey} plugin.`);
+                    // Mark plugin as registered
+                    registeredPlugins[config.settings.settingsKey] = true;
+                }
             } catch (error) {
                 console.warn(`Failed to register ${config.settings.settingsKey} plugin: ${error.message}`);
             }
-
             // Prepare plugin-specific settings if needed
             const pluginSpecificSettings = {};
             let missingEnvVars = []; // To store missing environment variables
