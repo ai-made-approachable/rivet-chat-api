@@ -1,9 +1,10 @@
 import * as Rivet from '@ironclad/rivet-node';
 import fs from 'fs/promises';
 import path from 'path';
-// Import and  register plugins
-import RivetPluginChroma from "rivet-plugin-chromadb";
-Rivet.globalRivetNodeRegistry.registerPlugin(RivetPluginChroma(Rivet));
+import { setupPlugins, logAvailablePluginsInfo } from './pluginConfiguration.js';
+import event from 'events';
+logAvailablePluginsInfo();
+event.setMaxListeners(100);
 class DebuggerServer {
     constructor() {
         this.debuggerServer = null;
@@ -32,10 +33,13 @@ export class GraphManager {
         this.modelContent = params.modelContent;
     }
     async *runGraph(messages) {
+        console.time('runGraph');
         let projectContent;
         // Ensure the DebuggerServer is started
         DebuggerServer.getInstance().startDebuggerServerIfNeeded();
         try {
+            // Dynamically setup plugins and retrieve their settings
+            const pluginSettings = await setupPlugins(Rivet);
             if (this.modelContent) {
                 // Use direct model content if provided
                 projectContent = this.modelContent;
@@ -43,6 +47,7 @@ export class GraphManager {
             else {
                 // Otherwise, read the model file from the filesystem
                 const modelFilePath = path.resolve(process.cwd(), './rivet', this.config.file);
+                console.log("-----------------------------------------------------");
                 console.log('runGraph called with model file:', modelFilePath);
                 projectContent = await fs.readFile(modelFilePath, 'utf8');
             }
@@ -68,11 +73,7 @@ export class GraphManager {
                 openAiKey: process.env.OPENAI_API_KEY,
                 remoteDebugger: DebuggerServer.getInstance().getDebuggerServer(),
                 datasetProvider: datasetProvider,
-                pluginSettings: {
-                    chroma: {
-                        databaseUri: process.env.CHROMA_DATABASE_URI,
-                    },
-                },
+                pluginSettings,
                 context: {
                     ...Object.entries(process.env).reduce((acc, [key, value]) => {
                         acc[key] = value;
@@ -87,19 +88,38 @@ export class GraphManager {
                     }
                 }
             };
+            console.log("-----------------------------------------------------");
             console.log('Creating processor');
             const { processor, run } = Rivet.createProcessor(project, options);
             const runPromise = run();
             console.log('Starting to process events');
             let lastContent = '';
             for await (const event of processor.events()) {
-                if (event.type === 'partialOutput' &&
-                    event.node.title.toLowerCase() === "output") {
+                // Condition for 'partialOutput' events
+                if (event.type === 'partialOutput' && event.node?.title?.toLowerCase() === "output") {
                     const content = event.outputs.response.value;
-                    if (content.startsWith(lastContent)) {
+                    if (content && content.startsWith(lastContent)) {
                         const delta = content.slice(lastContent.length);
+                        // Log before yielding to ensure it's directly related to the output being processed
+                        //console.log(`Yielding output from event type '${event.type}' with node type '${event.node?.type}'.`);
                         yield delta;
                         lastContent = content;
+                    }
+                }
+                // Condition for 'nodeFinish' events
+                else if (event.type === 'nodeFinish' &&
+                    event.node?.title?.toLowerCase() === "output" &&
+                    !event.node?.type?.includes('chat')) {
+                    try {
+                        const content = event.outputs.response.value;
+                        if (content) {
+                            // Log before yielding to ensure it's directly related to the output being processed
+                            //console.log(`Yielding output from event type '${event.type}' with node type '${event.node?.type}', on nodeFinish.`);
+                            yield JSON.stringify(content);
+                        }
+                    }
+                    catch (error) {
+                        console.error(`Error: Cannot return output from node of type ${event.node?.type}. This only works with certain nodes (e.g., text or object)`);
                     }
                 }
             }
@@ -108,10 +128,17 @@ export class GraphManager {
             if (finalOutputs && finalOutputs["output"]) {
                 yield finalOutputs["output"].value;
             }
+            if (finalOutputs["cost"]) {
+                console.log(`Cost: ${finalOutputs["cost"].value}`);
+            }
             console.log('runGraph finished');
         }
         catch (error) {
             console.error('Error in runGraph:', error);
+        }
+        finally {
+            console.timeEnd('runGraph');
+            console.log("-----------------------------------------------------");
         }
     }
 }

@@ -1,0 +1,44 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    JJvFo2pfdhQg6RavIrndv:
+      metadata:
+        description: ""
+        id: JJvFo2pfdhQg6RavIrndv
+        name: Untitled Graph
+      nodes:
+        '[Jz5waCmB9O6k3xNTWyIlw]:text "Text"':
+          data:
+            text: Text
+          outgoingConnections:
+            - output->"Chat (Google)" npgjUxoVSIfAzdZzQ4sg1/prompt
+          visualData: 591.9716257886648/356.0787304353676/330/3//
+        '[npgjUxoVSIfAzdZzQ4sg1]:chatGoogle "Chat (Google)"':
+          data:
+            cache: false
+            maxTokens: 1024
+            model: gemini-pro
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useMaxTokensInput: false
+            useModelInput: false
+            useTemperatureInput: false
+            useTopKInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+          visualData: 1038.9185355526101/325.4659283967412/305/1//
+  metadata:
+    description: ""
+    id: bFqp2eVV5_K_HzzUqqLKz
+    mainGraphId: JJvFo2pfdhQg6RavIrndv
+    title: google test
+  plugins:
+    - id: google
+      name: Google
+      type: built-in
