@@ -139,3 +139,8 @@ Note: I did not test every plugin if it works. Please contact me if there are is
 
 ## 3.3 Additional debugging
 You can send data to an "raise event" node with id "debugger" to log the data to the console. This is useful if you run the graphs in the cloud.
+
+## 3.4 Streaming output to the API
+Generally you can potentially use any node as output, but currently only nodes that either stream the output (chat nodes) or provide a clear output value (e.g. text node, object node) are supported. All nodes that shall be made available need to be renamed to "output"
+
+Non-Streaming output will still be streamed (but very quickly) by the rivet-chat-api for a better user experience.

@@ -2,6 +2,7 @@ import * as Rivet from '@ironclad/rivet-node';
 import fs from 'fs/promises';
 import path from 'path';
 import { setupPlugins, logAvailablePluginsInfo } from './pluginConfiguration.js';
+import { delay } from './utils.js';
 import event from 'events';
 logAvailablePluginsInfo();
 event.setMaxListeners(100);
@@ -95,27 +96,30 @@ export class GraphManager {
             console.log('Starting to process events');
             let lastContent = '';
             for await (const event of processor.events()) {
-                // Condition for 'partialOutput' events
+                // Handle 'partialOutput' events
                 if (event.type === 'partialOutput' && event.node?.title?.toLowerCase() === "output") {
-                    const content = event.outputs.response.value;
+                    const content = event.outputs.response?.value || event.outputs.output?.value;
                     if (content && content.startsWith(lastContent)) {
                         const delta = content.slice(lastContent.length);
-                        // Log before yielding to ensure it's directly related to the output being processed
-                        //console.log(`Yielding output from event type '${event.type}' with node type '${event.node?.type}'.`);
                         yield delta;
                         lastContent = content;
                     }
                 }
-                // Condition for 'nodeFinish' events
+                // Handle 'nodeFinish' events with artificial streaming
                 else if (event.type === 'nodeFinish' &&
                     event.node?.title?.toLowerCase() === "output" &&
                     !event.node?.type?.includes('chat')) {
                     try {
-                        const content = event.outputs.response.value;
+                        let content = event.outputs.output.value;
                         if (content) {
-                            // Log before yielding to ensure it's directly related to the output being processed
-                            //console.log(`Yielding output from event type '${event.type}' with node type '${event.node?.type}', on nodeFinish.`);
-                            yield JSON.stringify(content);
+                            if (typeof content !== 'string') {
+                                content = JSON.stringify(content);
+                            }
+                            // Stream the content character-by-character
+                            for (const char of content) {
+                                await delay(0.5); // Artifical delay to simulate streaming
+                                yield char;
+                            }
                         }
                     }
                     catch (error) {
@@ -131,7 +135,6 @@ export class GraphManager {
             if (finalOutputs["cost"]) {
                 console.log(`Cost: ${finalOutputs["cost"].value}`);
             }
-            console.log('runGraph finished');
         }
         catch (error) {
             console.error('Error in runGraph:', error);
