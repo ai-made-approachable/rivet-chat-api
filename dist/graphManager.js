@@ -32,6 +32,7 @@ export class GraphManager {
     constructor(params) {
         this.config = params.config || {};
         this.modelContent = params.modelContent;
+        this.streamedNodeIds = new Set();
     }
     async *runGraph(messages) {
         console.time('runGraph');
@@ -103,21 +104,24 @@ export class GraphManager {
                         const delta = content.slice(lastContent.length);
                         yield delta;
                         lastContent = content;
+                        this.streamedNodeIds.add(event.node.id); // Add node ID to the Set when streaming output
                     }
                 }
-                // Handle 'nodeFinish' events with artificial streaming
+                // Modify 'nodeFinish' handling to check if node ID has already streamed output
                 else if (event.type === 'nodeFinish' &&
                     event.node?.title?.toLowerCase() === "output" &&
-                    !event.node?.type?.includes('chat')) {
+                    !event.node?.type?.includes('chat') &&
+                    !this.streamedNodeIds.has(event.node.id) // Check if the node ID is not in the streamedNodeIds Set
+                ) {
                     try {
-                        let content = event.outputs.output.value;
+                        let content = event.outputs.output.value || event.outputs.output.output;
                         if (content) {
                             if (typeof content !== 'string') {
                                 content = JSON.stringify(content);
                             }
                             // Stream the content character-by-character
                             for (const char of content) {
-                                await delay(0.5); // Artifical delay to simulate streaming
+                                await delay(0.5); // Artificial delay to simulate streaming
                                 yield char;
                             }
                         }

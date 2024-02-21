@@ -5,4 +5,4 @@ config.gypi
 /src/archive/
 /dist/archive/
 yarn.lock
-/rivet/email_assistant.rivet-project
+/rivet/test*
