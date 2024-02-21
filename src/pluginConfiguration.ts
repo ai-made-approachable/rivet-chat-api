@@ -105,6 +105,19 @@ const pluginConfigurations = [
             },
         },
     }, 
+    {
+        envVar: 'OLLAMA_PLUGIN',
+        importPath: 'rivet-plugin-ollama',
+        isBuiltIn: false, 
+        registerFunction: (plugin, Rivet) => Rivet.globalRivetNodeRegistry.registerPlugin(plugin(Rivet)),
+        settings: {
+            envVarPrefix: 'OLLAMA',
+            settingsKey: 'ollama',
+            settingsStructure: {
+                host: 'HOST',
+            },
+        },
+    }, 
 ];
 
 const registeredPlugins = {};
