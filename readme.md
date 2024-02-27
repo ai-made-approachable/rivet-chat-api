@@ -144,3 +144,6 @@ You can send data to an "raise event" node with id "debugger" to log the data to
 Generally you can potentially use any node as output, but currently only nodes that either stream the output (chat nodes) or provide a clear output value (e.g. text node, object node) are supported. All nodes that shall be made available need to be renamed to "output"
 
 Non-Streaming output will still be streamed (but very quickly) by the rivet-chat-api for a better user experience.
+
+## 3.5 CORS issues
+If you are using the API from another domain you might run into CORS errors. To fix this you can add `ACCESS_CONTROL_ALLOW_ORIGIN` to the environment variables (e.g. "*")

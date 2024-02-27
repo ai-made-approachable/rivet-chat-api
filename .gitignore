@@ -6,3 +6,4 @@ config.gypi
 /dist/archive/
 yarn.lock
 /rivet/test*
+.DS_Store
