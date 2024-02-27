@@ -2,6 +2,7 @@ import * as Rivet from '@ironclad/rivet-node';
 import fs from 'fs/promises';
 import path from 'path';
 import { setupPlugins, logAvailablePluginsInfo } from './pluginConfiguration.js';
+import { delay } from './utils.js';
 import event from 'events';
 logAvailablePluginsInfo();
 event.setMaxListeners(100);
@@ -31,6 +32,7 @@ export class GraphManager {
     constructor(params) {
         this.config = params.config || {};
         this.modelContent = params.modelContent;
+        this.streamedNodeIds = new Set();
     }
     async *runGraph(messages) {
         console.time('runGraph');
@@ -95,25 +97,33 @@ export class GraphManager {
             console.log('Starting to process events');
             let lastContent = '';
             for await (const event of processor.events()) {
-                // Condition for 'partialOutput' events
+                // Handle 'partialOutput' events
                 if (event.type === 'partialOutput' && event.node?.title?.toLowerCase() === "output") {
-                    const content = event.outputs.response.value;
+                    const content = event.outputs.response?.value || event.outputs.output?.value;
                     if (content && content.startsWith(lastContent)) {
                         const delta = content.slice(lastContent.length);
-                        //console.log(`Yielding output from event type '${event.type}' with node type '${event.node?.type}'.`);
                         yield delta;
                         lastContent = content;
+                        this.streamedNodeIds.add(event.node.id); // Add node ID to the Set when streaming output
                     }
                 }
-                // Condition for 'nodeFinish' events
+                // Modify 'nodeFinish' handling to check if node ID has already streamed output
                 else if (event.type === 'nodeFinish' &&
                     event.node?.title?.toLowerCase() === "output" &&
-                    !event.node?.type?.includes('chat')) {
+                    !event.node?.type?.includes('chat') &&
+                    !this.streamedNodeIds.has(event.node.id) // Check if the node ID is not in the streamedNodeIds Set
+                ) {
                     try {
-                        const content = event.outputs.response.value;
+                        let content = event.outputs.output.value || event.outputs.output.output;
                         if (content) {
-                            //console.log(`Yielding output from event type '${event.type}' with node type '${event.node?.type}', on nodeFinish.`);
-                            yield JSON.stringify(content);
+                            if (typeof content !== 'string') {
+                                content = JSON.stringify(content);
+                            }
+                            // Stream the content character-by-character
+                            for (const char of content) {
+                                await delay(0.5); // Artificial delay to simulate streaming
+                                yield char;
+                            }
                         }
                     }
                     catch (error) {
@@ -129,7 +139,6 @@ export class GraphManager {
             if (finalOutputs["cost"]) {
                 console.log(`Cost: ${finalOutputs["cost"].value}`);
             }
-            console.log('runGraph finished');
         }
         catch (error) {
             console.error('Error in runGraph:', error);

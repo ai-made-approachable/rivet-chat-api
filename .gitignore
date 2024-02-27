@@ -5,5 +5,5 @@ config.gypi
 /src/archive/
 /dist/archive/
 yarn.lock
-/rivet/test
+/rivet/test*
 .DS_Store
