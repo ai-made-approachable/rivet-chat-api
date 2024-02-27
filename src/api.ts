@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { authenticateAndGetJWT, listFiles, fetchFileContent } from  './files.js';
 import morgan from 'morgan';
+import cors from 'cors';
 
 const app = express();
 const port = process.env.PORT || 3100; // Default port or environment variable
@@ -18,6 +19,12 @@ app.use((req, res, next) => {
     console.log(`Received ${req.method} request for ${req.url}`);
     next();
 });
+
+app.use(cors({
+    origin: process.env.ACCESS_CONTROL_ALLOW_ORIGIN || '*',
+    methods: ['GET', 'POST', 'OPTIONS'], // Specify the methods you want to allow
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // Middleware for API Key validation in production
 app.use((req, res, next) => {

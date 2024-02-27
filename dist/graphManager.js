@@ -100,7 +100,6 @@ export class GraphManager {
                     const content = event.outputs.response.value;
                     if (content && content.startsWith(lastContent)) {
                         const delta = content.slice(lastContent.length);
-                        // Log before yielding to ensure it's directly related to the output being processed
                         //console.log(`Yielding output from event type '${event.type}' with node type '${event.node?.type}'.`);
                         yield delta;
                         lastContent = content;
@@ -113,7 +112,6 @@ export class GraphManager {
                     try {
                         const content = event.outputs.response.value;
                         if (content) {
-                            // Log before yielding to ensure it's directly related to the output being processed
                             //console.log(`Yielding output from event type '${event.type}' with node type '${event.node?.type}', on nodeFinish.`);
                             yield JSON.stringify(content);
                         }
