@@ -139,3 +139,6 @@ Note: I did not test every plugin if it works. Please contact me if there are is
 
 ## 3.3 Additional debugging
 You can send data to an "raise event" node with id "debugger" to log the data to the console. This is useful if you run the graphs in the cloud.
+
+## 3.4 CORS issues
+If you are using the API from another domain you might run into CORS errors. To fix this you can add `ACCESS_CONTROL_ALLOW_ORIGIN` to the environment variables (e.g. "*")
