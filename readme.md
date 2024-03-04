@@ -18,8 +18,8 @@ Features:
 # 1. Cloud setup
 ## Requirements
 - Free Github account (https://github.com/join)
-- Free Supabase account (https://https://supabase.com/)
-- Free railway account (https://https://railway.app/)
+- Free Supabase account (https://supabase.com/)
+- Free railway account (https://railway.app/)
 
 ## Installation
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/XjMVyQ?referralCode=Bc2Iiw)

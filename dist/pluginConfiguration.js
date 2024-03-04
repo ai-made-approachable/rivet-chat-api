@@ -118,6 +118,29 @@ const pluginConfigurations = [
             },
         },
     },
+    {
+        envVar: 'PDF2MD_PLUGIN',
+        importPath: 'rivet-plugin-pdf2md',
+        isBuiltIn: false,
+        registerFunction: (plugin, Rivet) => Rivet.globalRivetNodeRegistry.registerPlugin(plugin(Rivet)),
+        settings: {
+            envVarPrefix: 'PDF2MD',
+            settingsKey: 'pdf2md',
+        },
+    },
+    {
+        envVar: 'TRANSFORMERLAB_PLUGIN',
+        importPath: 'rivet-plugin-transformerlab',
+        isBuiltIn: false,
+        registerFunction: (plugin, Rivet) => Rivet.globalRivetNodeRegistry.registerPlugin(plugin(Rivet)),
+        settings: {
+            envVarPrefix: 'TRANSFORMERLAB',
+            settingsKey: 'transformerlab',
+            settingsStructure: {
+                host: 'HOST',
+            },
+        },
+    },
 ];
 const registeredPlugins = {};
 export async function setupPlugins(Rivet) {
